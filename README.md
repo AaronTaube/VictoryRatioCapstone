@@ -9,5 +9,5 @@ The Unity version of Victory Ratio. Project in progress for a 2021 Creative Comp
  * GIMP (or your preferred pixel art tool)
 
 ## Requirements to Run
- * Go to <TBD> to run in browser
- * Download from <TBD>
+ * Go to **TBD** to run in browser
+ * Download from **TBD**
