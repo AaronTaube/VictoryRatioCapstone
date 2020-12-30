@@ -104,6 +104,36 @@ public class Astar : MonoBehaviour
 	{
 		List<Node> neighbors = new List<Node>();
 
+		for(int x = -1; x <=1; x++)
+		{
+			Vector3Int neighborPosition = new Vector3Int(parentPosition.x - x, parentPosition.y, parentPosition.z);
+			if (x != 0)
+			{
+				if (neighborPosition != startPos && tilemap.GetTile(neighborPosition))
+				{
+					Node neighbor = GetNode(neighborPosition);
+					neighbors.Add(neighbor);
+				}
+
+
+			}
+		}
+
+		for(int y = -1; y <= 1; y++)
+		{
+			Vector3Int neighborPosition = new Vector3Int(parentPosition.x, parentPosition.y - y, parentPosition.z);
+			if (y != 0)
+			{
+				if (neighborPosition != startPos && tilemap.GetTile(neighborPosition))
+				{
+					Node neighbor = GetNode(neighborPosition);
+					neighbors.Add(neighbor);
+				}
+
+
+			}
+		}
+		/*
 		for (int x = -1; x <= 1; x++)
 		{
 			for (int y = -1; y <= 1; y++)
@@ -120,7 +150,7 @@ public class Astar : MonoBehaviour
 					
 				}
 			}
-		}
+		}*/
 
 		return neighbors;
 	}
@@ -130,11 +160,6 @@ public class Astar : MonoBehaviour
 		for(int i = 0; i < neighbors.Count; i++)
 		{
 			Node neighbor = neighbors[i];
-
-			/*if(!ConnectedDiagonally(current, neighbor))
-			{
-				continue;
-			}*/
 
 			int gScore = DetermineGScore(neighbors[i].Position, current.Position);
 
@@ -168,7 +193,7 @@ public class Astar : MonoBehaviour
 	private int DetermineGScore(Vector3Int neighbor, Vector3Int current)
 	{
 		int gScore = 0;
-		int x = current.x - neighbor.x;
+		/*int x = current.x - neighbor.x;
 		int y = current.y - neighbor.y;
 		if(Math.Abs(x-y) % 2 == 1)
 		{
@@ -177,7 +202,9 @@ public class Astar : MonoBehaviour
 		else
 		{
 			gScore = 14;
-		}
+		}*/
+		//Currently gScore will always equal 10. If different terrain types are added that affect gScore, this will change.
+		gScore = 10;
 		return gScore;
 	}
 
