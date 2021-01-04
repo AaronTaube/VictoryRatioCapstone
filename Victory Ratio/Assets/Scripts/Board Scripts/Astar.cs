@@ -21,6 +21,9 @@ public class Astar : MonoBehaviour
 	private Tile[] tiles;
 
 	[SerializeField]
+	UnitsManager unitsManager;
+
+	[SerializeField]
 	private Camera camera;
 
 	[SerializeField]
