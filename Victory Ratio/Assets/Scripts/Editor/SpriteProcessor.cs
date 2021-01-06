@@ -14,6 +14,9 @@ public class SpriteProcessor : AssetPostprocessor
 		{
 			TextureImporter textureImporter = (TextureImporter) assetImporter;
 			textureImporter.textureType = TextureImporterType.Sprite;
+			textureImporter.spritePixelsPerUnit = 64;
 		}
+		
+		
     }
 }
