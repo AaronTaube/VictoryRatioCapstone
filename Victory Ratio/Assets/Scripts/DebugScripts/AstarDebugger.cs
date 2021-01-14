@@ -40,7 +40,15 @@ public class AstarDebugger : MonoBehaviour
 	private GameObject debugTextPrefab;
 
 	private List<GameObject> debugObjects = new List<GameObject>();
-
+	/// <summary>
+	/// Creates debug tiles of A* pathfinding algorithm to show which tiles were considered and closed, as well as the calculated costs of movement to each of them
+	/// </summary>
+	/// <param name="openList"></param>
+	/// <param name="closedList"></param>
+	/// <param name="allNodes"></param>
+	/// <param name="start"></param>
+	/// <param name="goal"></param>
+	/// <param name="path"></param>
 	public void CreateTiles(HashSet<Node> openList, HashSet<Node> closedList, Dictionary<Vector3Int, Node> allNodes, Vector3Int start, Vector3Int goal, Stack<Vector3Int> path = null)
 	{
 		foreach(Node node in openList)
@@ -126,7 +134,10 @@ public class AstarDebugger : MonoBehaviour
 		tilemap.SetTileFlags(position, TileFlags.None);
 		tilemap.SetColor(position, color);
 	}
-	//Need to plug into debug UI button
+	/// <summary>
+	/// Renders debug info visible or invisible
+	/// Need to plug into debug UI button
+	/// </summary>
 	public void ShowHide()
 	{
 		canvas.gameObject.SetActive(!canvas.isActiveAndEnabled);
@@ -141,7 +152,5 @@ public class AstarDebugger : MonoBehaviour
 		{
 			Destroy(go);
 		}
-
-		
 	}
 }

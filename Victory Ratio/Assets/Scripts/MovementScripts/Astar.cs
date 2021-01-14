@@ -38,6 +38,9 @@ public class Astar : MonoBehaviour
 	private Dictionary<Vector3Int, Node> allNodes = new Dictionary<Vector3Int, Node>();
 
     // Update is called once per frame
+	/// <summary>
+	/// Current method of getting debug information in the editor. Will likely be changed to better suit our needs. 
+	/// </summary>
     void Update()
     {
 		if (Input.GetMouseButtonDown(0))
@@ -70,7 +73,9 @@ public class Astar : MonoBehaviour
 		//Adding start to the opoen list
 		openList.Add(current);
 	}
-
+	/// <summary>
+	/// Begins the process of finding the most direct path from the starting location to the target location based on A* pathfinding. 
+	/// </summary>
 	private void Algorithm()
 	{
 		if (current == null)
@@ -102,7 +107,11 @@ public class Astar : MonoBehaviour
 
 		AstarDebugger.MyInstance.CreateTiles(openList, closedList, allNodes, startPos, goalPos, path);
 	}
-	
+	/// <summary>
+	/// Returns list of the neighbors in the pile above, below, left, and right of the given tile position
+	/// </summary>
+	/// <param name="parentPosition"></param>
+	/// <returns></returns>
 	private List<Node> FindNeighbors(Vector3Int parentPosition)
 	{
 		List<Node> neighbors = new List<Node>();
@@ -136,28 +145,14 @@ public class Astar : MonoBehaviour
 
 			}
 		}
-		/*
-		for (int x = -1; x <= 1; x++)
-		{
-			for (int y = -1; y <= 1; y++)
-			{
-				Vector3Int neighborPosition = new Vector3Int(parentPosition.x - x, parentPosition.y - y, parentPosition.z);
-				if(y != 0 || x != 0)
-				{
-					if(neighborPosition != startPos && tilemap.GetTile(neighborPosition))
-					{
-						Node neighbor = GetNode(neighborPosition);
-						neighbors.Add(neighbor);
-					}
-
-					
-				}
-			}
-		}*/
 
 		return neighbors;
 	}
-
+	/// <summary>
+	/// Assign gScore values to neighbor nodes, overwriting higher values, as this is a shorter path. 
+	/// </summary>
+	/// <param name="neighbors"></param>
+	/// <param name="current"></param>
 	private void ExamineNeighbors(List<Node> neighbors, Node current)
 	{
 		for(int i = 0; i < neighbors.Count; i++)
@@ -181,7 +176,15 @@ public class Astar : MonoBehaviour
 			}
 		}
 	}
-
+	/// <summary>
+	/// Assign values to the node based on the parent's own values. 
+	/// G is the weight of movement purely by number of tiles,
+	/// H is the weight of movement based off the heuristic of distance from the goal
+	/// F is the combination of the two weights. 
+	/// </summary>
+	/// <param name="parent"></param>
+	/// <param name="neighbor"></param>
+	/// <param name="cost"></param>
 	private void CalcValues(Node parent, Node neighbor, int cost)
 	{
 		neighbor.Parent = parent;
@@ -192,7 +195,13 @@ public class Astar : MonoBehaviour
 
 		neighbor.F = neighbor.G + neighbor.H;
 	}
-
+	/// <summary>
+	/// Method likely to be discarded. Useful if tiles that slow or increase movement are introduced later,
+	/// or if AI needs to avoid certain locations, but currently just returns a set GScore. 
+	/// </summary>
+	/// <param name="neighbor"></param>
+	/// <param name="current"></param>
+	/// <returns></returns>
 	private int DetermineGScore(Vector3Int neighbor, Vector3Int current)
 	{
 		int gScore = 0;
@@ -210,7 +219,10 @@ public class Astar : MonoBehaviour
 		gScore = 10;
 		return gScore;
 	}
-
+	/// <summary>
+	/// Handles iterating to the next tile
+	/// </summary>
+	/// <param name="current"></param>
 	private void UpdateCurrentTile(ref Node current)//Uses ref to Node as extra precaution.
 	{
 		openList.Remove(current);
@@ -222,7 +234,11 @@ public class Astar : MonoBehaviour
 			current = openList.OrderBy(x => x.F).First();
 		}
 	}
-
+	/// <summary>
+	/// Return node in that position. If node in that position is not being tracked, start tracking it. 
+	/// </summary>
+	/// <param name="position"></param>
+	/// <returns></returns>
 	private Node GetNode(Vector3Int position)
 	{
 		if (allNodes.ContainsKey(position))
@@ -236,10 +252,14 @@ public class Astar : MonoBehaviour
 			return node;
 		}
 	}
-
+	/// <summary>
+	/// Changes tile to start or goal position based on click count
+	/// Will be completely changed to assign these values from outside classes. 
+	/// </summary>
+	/// <param name="clickPos"></param>
 	private void ChangeTile(Vector3Int clickPos)
 	{
-		//tilemap.SetTile(clickPos, tiles[(int)tileType]); not what we doin
+		
 
 		if(clickCount % 2 == 1)
 		{
@@ -250,7 +270,7 @@ public class Astar : MonoBehaviour
 			goalPos = clickPos;
 		}
 	}
-	//Not necessary for current project
+	//Not necessary for current project, but kept for reference for now.
 	/*private bool ConnectedDiagonally(Node currentNode, Node neighbor)
 	{
 		Vector3Int direct = currentNode.Position - neighbor.Position;
@@ -264,7 +284,11 @@ public class Astar : MonoBehaviour
 		}
 		return true;
 	}*/
-
+	/// <summary>
+	/// Iterats backwards from the goal position to the start position to find the nodes a unit will travel. 
+	/// </summary>
+	/// <param name="current"></param>
+	/// <returns></returns>
 	private Stack<Vector3Int> GeneratePath(Node current)
 	{
 		if(current.Position == goalPos)

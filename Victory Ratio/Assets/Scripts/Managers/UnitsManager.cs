@@ -40,7 +40,6 @@ public class UnitsManager : MonoBehaviour
             {
                 Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
                 Vector3Int clickPosition = tilemap.WorldToCell(mouseWorldPos);
-                //Vector3Int clickPosition = Vector3Int.FloorToInt(mouseWorldPos);
                 if (allPlayerUnits.ContainsKey(clickPosition))
                 {
                     Debug.Log("hit");
@@ -52,16 +51,18 @@ public class UnitsManager : MonoBehaviour
             }
         }
     }
+	/// <summary>
+	/// Finds and begins to track all units on the map in dictionaries. 
+	/// Will be modified as different unit control types are introduced. 
+	/// </summary>
     void PopulateUnitDicts()
 	{
         foreach (Transform child in playerUnits.transform)
         {
-            //Vector3Int intPosition = Vector3Int.FloorToInt(child.position);
-            //allPlayerUnits.Add(intPosition, child.GetComponent<Unit>());
             Vector3Int mapPosition = tilemap.WorldToCell(child.position);
             allPlayerUnits.Add(mapPosition, child.GetComponent<Unit>());
         }
-        foreach (Transform child in enemyUnits.transform)
+        /*foreach (Transform child in enemyUnits.transform)
         {
             Vector3Int intPosition = Vector3Int.FloorToInt(child.position);
             allPlayerUnits.Add(intPosition, child.GetComponent<Unit>());
@@ -70,11 +71,15 @@ public class UnitsManager : MonoBehaviour
         {
             Vector3Int intPosition = Vector3Int.FloorToInt(child.position);
             allPlayerUnits.Add(intPosition, child.GetComponent<Unit>());
-        }
+        }*/
         foreach (KeyValuePair<Vector3Int, Unit> unit in allPlayerUnits)
         {
             Debug.Log(unit.Key);
 
         }
     }
+	public Dictionary<Vector3Int, Unit> GetAllPlayerUnits()
+	{
+		return allPlayerUnits;
+	}
 }

@@ -12,7 +12,9 @@ public class Unit : MonoBehaviour
     int defaultMovementSpeed = 3;
     int cavalryMovementSpeed = 5;
 
-
+	/// <summary>
+	/// All classes of unit in game. Will be referenced to find type advantages and other stats. 
+	/// </summary>
     public enum UnitType
     {
         Sword,
@@ -21,8 +23,11 @@ public class Unit : MonoBehaviour
         Cavalry,
         Archer
     }
-    //Could probably do with Boolean, but if added escort missions or NPCs, may be better this way.
-    public enum Alignment
+	/// <summary>
+	/// All alignments in game.
+	/// Could probably do with Boolean, but if added escort missions or NPCs, may be better this way.
+	/// </summary>
+	public enum Alignment
     {
         Player,
         Enemy
@@ -32,7 +37,12 @@ public class Unit : MonoBehaviour
     UnitType type;
     [SerializeField]
     Alignment alignment;
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="type"></param>
+	/// <param name="count"></param>
+	/// <param name="alignment"></param>
     public Unit(UnitType type, int count = 0, Alignment alignment = Alignment.Player)
     {
         this.count = count;
@@ -40,10 +50,9 @@ public class Unit : MonoBehaviour
         this.alignment = alignment;
     }
 
- 
-
-
-
+	/// <summary>
+	/// 
+	/// </summary>
     void SetMovementSpeed()
     {
         switch (type)
