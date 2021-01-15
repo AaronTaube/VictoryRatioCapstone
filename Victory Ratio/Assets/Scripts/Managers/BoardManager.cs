@@ -25,11 +25,17 @@ public class BoardManager : MonoBehaviour
 	private Camera camera;
 
 	[SerializeField]
-	private LayerMask mask;
+	private LayerMask boardMask;
+	[SerializeField]
+	private LayerMask moveOptionMask;
 
 	private List<GameObject> movementTiles = new List<GameObject>();
 
+	//Unit info
+	Vector3Int unitPos;
+	Vector3Int targetPos;
 	int unitMoveRange = 3;
+	
 	/// <summary>
 	/// Checks player clicks to handle unit selection and actions. 
 	/// </summary>
@@ -37,14 +43,25 @@ public class BoardManager : MonoBehaviour
 	{
 		if (Input.GetMouseButtonDown(0))
 		{
-			RaycastHit2D hit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, mask);
+			RaycastHit2D boardHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, boardMask);
+			RaycastHit2D movementHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, moveOptionMask);
+			if (movementHit.collider != null)
+			{
+				Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
+				Vector3Int clickPosition = movementBoard.WorldToCell(mouseWorldPos);
+				targetPos = clickPosition;
+				Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
+				//Run method to start movement
+				return;
+			}
 
-			if (hit.collider != null)
+			if (boardHit.collider != null)
 			{
 				Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
 				Vector3Int clickPosition = movementBoard.WorldToCell(mouseWorldPos);
 				if (SelectableUnitClicked(clickPosition))
 				{
+					unitPos = clickPosition;
 					CreateMovementTiles(clickPosition);
 				}
 				
@@ -73,6 +90,9 @@ public class BoardManager : MonoBehaviour
 		{
 			SetToMovementTile(validMoves.Pop().Position);
 		}
+		movementBoard.SetTile(unitPos, null);
+		
+
 
 	}
 	public void SetToMovementTile(Vector3Int position)
