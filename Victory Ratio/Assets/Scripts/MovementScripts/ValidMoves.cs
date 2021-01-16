@@ -14,7 +14,7 @@ public class ValidMoves : MonoBehaviour
 	private Node current;
 	private HashSet<Node> openList;
 	private HashSet<Node> closedList;
-	private Stack<Node> validMoves;
+	private Dictionary<Vector3Int, Node> validMoves;
 
 	private Dictionary<Vector3Int, Node> allNodes = new Dictionary<Vector3Int, Node>();
 	private int unitRange;
@@ -24,14 +24,15 @@ public class ValidMoves : MonoBehaviour
 	/// </summary>
 	private void Initialize()
 	{
+		allNodes = new Dictionary<Vector3Int, Node>();
 		current = GetNode(startPos);
 
 		openList = new HashSet<Node>();
 
 		closedList = new HashSet<Node>();
 
-		validMoves = new Stack<Node>();
-		//Adding start to the opoen list
+		validMoves = new Dictionary<Vector3Int, Node>();
+		//Adding start to the open list
 		openList.Add(current);
 	}
 	/// <summary>
@@ -39,10 +40,9 @@ public class ValidMoves : MonoBehaviour
 	/// </summary>
 	private void Algorithm()
 	{
-		if (current == null)
-		{
-			Initialize();
-		}
+		
+		Initialize();
+		
 
 		while (openList.Count > 0)
 		{
@@ -135,10 +135,6 @@ public class ValidMoves : MonoBehaviour
 		neighbor.Parent = parent;
 
 		neighbor.G = parent.G + cost;
-
-		//neighbor.H = 0;//No goal to apply this measure.
-
-		neighbor.F = neighbor.G;// + neighbor.H;
 	}
 	/// <summary>
 	/// Method likely to be discarded. Useful if tiles that slow or increase movement are introduced later,
@@ -173,7 +169,7 @@ public class ValidMoves : MonoBehaviour
 	{
 		if (current.G <= unitRange * 10)
 		{
-			validMoves.Push(current);
+			validMoves.Add(current.Position, current);
 		}
 	}
 	/// <summary>
@@ -202,11 +198,13 @@ public class ValidMoves : MonoBehaviour
 	/// </summary>
 	/// <param name="movement"></param>
 	/// <returns></returns>
-	public Stack<Node> GetValidMoves(Vector3Int startPos, int range)
+	public Dictionary<Vector3Int, Node> GetValidMoves(Vector3Int startPos, int range)
 	{
+		//validMoves = new Dictionary<Vector3Int, Node>();
 		this.startPos = startPos;
 		unitRange = range;
 		Algorithm();
+		
 		return validMoves;
 	}
 

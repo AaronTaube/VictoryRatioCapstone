@@ -21,9 +21,6 @@ public class Astar : MonoBehaviour
 	private Tile[] tiles;
 
 	[SerializeField]
-	UnitsManager unitsManager;
-
-	[SerializeField]
 	private Camera camera;
 
 	[SerializeField]
@@ -43,7 +40,7 @@ public class Astar : MonoBehaviour
 	/// </summary>
     void Update()
     {
-		if (Input.GetMouseButtonDown(0))
+		/*if (Input.GetMouseButtonDown(0))
 		{
 			RaycastHit2D hit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, mask);
 
@@ -61,10 +58,20 @@ public class Astar : MonoBehaviour
 			//Run my algorithm
 			Algorithm();
 
-		}
+		}*/
     }
+	public Stack<Vector3Int> GetPath(Vector3Int startPos, Vector3Int goalPos)
+	{
+		this.startPos = startPos;
+		this.goalPos = goalPos;
+		Algorithm();
+		return path;
+	}
 	private void Initialize()
 	{
+		//allNodes = new Dictionary<Vector3Int, Node>();
+		if (path != null)
+			path.Clear();
 		current = GetNode(startPos);
 
 		openList = new HashSet<Node>();
@@ -78,12 +85,11 @@ public class Astar : MonoBehaviour
 	/// </summary>
 	private void Algorithm()
 	{
-		if (current == null)
-		{
-			Initialize();
-		}
+		
+		Initialize();
 
-		while(openList.Count > 0 && path == null)
+
+		while (openList.Count > 0 && (path == null || path.Count == 0)) 
 		{
 			List<Node> neighbors = FindNeighbors(current.Position);
 
@@ -94,18 +100,7 @@ public class Astar : MonoBehaviour
 			path = GeneratePath(current);
 		}
 
-		if (path != null)
-		{
-			foreach (Vector3Int position in path)
-			{
-				if (position != goalPos)
-				{
-					tilemap.SetTile(position, tiles[2]);
-				}
-			}
-		}
-
-		AstarDebugger.MyInstance.CreateTiles(openList, closedList, allNodes, startPos, goalPos, path);
+		//AstarDebugger.MyInstance.CreateTiles(openList, closedList, allNodes, startPos, goalPos, path);
 	}
 	/// <summary>
 	/// Returns list of the neighbors in the pile above, below, left, and right of the given tile position

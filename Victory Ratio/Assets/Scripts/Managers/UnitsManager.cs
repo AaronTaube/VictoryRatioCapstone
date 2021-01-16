@@ -14,7 +14,7 @@ public class UnitsManager : MonoBehaviour
 
     [SerializeField]
     private Tilemap tilemap;
-
+	
     [SerializeField]
     private Camera camera;
 
@@ -57,11 +57,7 @@ public class UnitsManager : MonoBehaviour
 	/// </summary>
     void PopulateUnitDicts()
 	{
-        foreach (Transform child in playerUnits.transform)
-        {
-            Vector3Int mapPosition = tilemap.WorldToCell(child.position);
-            allPlayerUnits.Add(mapPosition, child.GetComponent<Unit>());
-        }
+		UpdatePlayerDict();
         /*foreach (Transform child in enemyUnits.transform)
         {
             Vector3Int intPosition = Vector3Int.FloorToInt(child.position);
@@ -78,8 +74,27 @@ public class UnitsManager : MonoBehaviour
 
         }
     }
+	/// <summary>
+	/// Make sure all units under player control are tracked. 
+	/// 
+	/// Not necessarily the most performant way to update unit positions, 
+	/// But cost should be negligible and makes for a nice, easy to maintain place to do it.
+	/// </summary>
+	public void UpdatePlayerDict()
+	{
+		allPlayerUnits = new Dictionary<Vector3Int, Unit>();
+		foreach (Transform child in playerUnits.transform)
+		{
+			Vector3Int mapPosition = tilemap.WorldToCell(child.position);
+			allPlayerUnits.Add(mapPosition, child.GetComponent<Unit>());
+		}
+	}
 	public Dictionary<Vector3Int, Unit> GetAllPlayerUnits()
 	{
 		return allPlayerUnits;
+	}
+	public Unit GetPlayerUnit(Vector3Int cellPos)
+	{
+		return allPlayerUnits[cellPos];
 	}
 }

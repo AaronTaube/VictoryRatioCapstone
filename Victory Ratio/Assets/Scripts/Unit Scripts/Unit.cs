@@ -6,16 +6,26 @@ public class Unit : MonoBehaviour
 {
     [SerializeField]
     int count;
+	[SerializeField]
+	UnitType type;
+	[SerializeField]
+	Alignment alignment;
 
-    int movementSpeed;
+	Vector3Int boardPos;
+
+	int movementSpeed;
 
     int defaultMovementSpeed = 3;
     int cavalryMovementSpeed = 5;
 
+	private void Start()
+	{
+		SetMovementSpeed();
+	}
 	/// <summary>
 	/// All classes of unit in game. Will be referenced to find type advantages and other stats. 
 	/// </summary>
-    public enum UnitType
+	public enum UnitType
     {
         Sword,
         Spear,
@@ -33,10 +43,7 @@ public class Unit : MonoBehaviour
         Enemy
     }
 
-    [SerializeField]
-    UnitType type;
-    [SerializeField]
-    Alignment alignment;
+    
 	/// <summary>
 	/// 
 	/// </summary>

@@ -17,6 +17,8 @@ public class BoardManager : MonoBehaviour
 	UnitsManager unitsManager;
 	[SerializeField]
 	ValidMoves movesManager;
+	[SerializeField]
+	private Astar pathfinder;
 
 	[SerializeField]
 	private Grid grid;
@@ -30,6 +32,7 @@ public class BoardManager : MonoBehaviour
 	private LayerMask moveOptionMask;
 
 	private List<GameObject> movementTiles = new List<GameObject>();
+	Dictionary<Vector3Int, Node> validMoves = new Dictionary<Vector3Int, Node>();
 
 	//Unit info
 	Vector3Int unitPos;
@@ -45,22 +48,33 @@ public class BoardManager : MonoBehaviour
 		{
 			RaycastHit2D boardHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, boardMask);
 			RaycastHit2D movementHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, moveOptionMask);
-			if (movementHit.collider != null)
+			/*if (movementHit.collider != null)
 			{
 				Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
 				Vector3Int clickPosition = movementBoard.WorldToCell(mouseWorldPos);
 				targetPos = clickPosition;
 				Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
 				//Run method to start movement
+				MoveUnit();
 				return;
-			}
+			}*/
 
 			if (boardHit.collider != null)
 			{
+				
 				Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
 				Vector3Int clickPosition = movementBoard.WorldToCell(mouseWorldPos);
+				if (validMoves.ContainsKey(clickPosition))
+				{
+					targetPos = clickPosition;
+					Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
+					//Run method to start movement
+					MoveUnit();
+					return;
+				}
 				if (SelectableUnitClicked(clickPosition))
 				{
+					Debug.Log("selectable");
 					unitPos = clickPosition;
 					CreateMovementTiles(clickPosition);
 				}
@@ -68,6 +82,29 @@ public class BoardManager : MonoBehaviour
 			}
 		}
 	}
+	private void MoveUnit()
+	{
+		Transform selectedUnit = unitsManager.GetPlayerUnit(unitPos).transform;
+		Queue<Vector3Int> path = GetPath();
+		while(path.Count > 0)
+		{
+			selectedUnit.transform.position = path.Dequeue();
+		}
+		unitsManager.UpdatePlayerDict();
+		ResetMovementTiles();
+	}
+	Queue<Vector3Int> GetPath()
+	{
+		Stack<Vector3Int> tilemapPath = pathfinder.GetPath(unitPos, targetPos);
+		Queue<Vector3Int> worldCoordPath = new Queue<Vector3Int>();
+		while(tilemapPath.Count > 0)
+		{
+			Vector3Int worldPos = Vector3Int.RoundToInt(movementBoard.CellToWorld(tilemapPath.Pop()));
+			worldCoordPath.Enqueue(worldPos);
+		}
+		return worldCoordPath;
+	}
+	
 	/// <summary>
 	/// 
 	/// </summary>
@@ -84,27 +121,30 @@ public class BoardManager : MonoBehaviour
 	/// <param name="startPos"></param>
 	public void CreateMovementTiles(Vector3Int startPos)
 	{
-		Stack<Node> validMoves = movesManager.GetValidMoves(startPos, unitMoveRange);
-		
-		while(validMoves.Count > 0)
+		validMoves = movesManager.GetValidMoves(startPos, unitMoveRange);
+
+		foreach (var tile in validMoves)
 		{
-			SetToMovementTile(validMoves.Pop().Position);
+			Vector3Int pos = tile.Key;//validMoves.Pop().Position;
+			SetToMovementTile(pos);
 		}
 		movementBoard.SetTile(unitPos, null);
-		
-
 
 	}
 	public void SetToMovementTile(Vector3Int position)
 	{
 		movementBoard.SetTile(position, moveTile);
 	}
-	
-	public void Reset()
+	/// <summary>
+	/// Clear board of movement tiles
+	/// </summary>
+	public void ResetMovementTiles()
 	{
-		foreach (GameObject go in movementTiles)
+		foreach(var tile in validMoves)
 		{
-			Destroy(go);
+			movementBoard.SetTile(tile.Key, null);
 		}
+		validMoves = new Dictionary<Vector3Int, Node>();
+		
 	}
 }
