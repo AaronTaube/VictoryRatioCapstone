@@ -85,7 +85,8 @@ public class UnitsManager : MonoBehaviour
 		allPlayerUnits = new Dictionary<Vector3Int, Unit>();
 		foreach (Transform child in playerUnits.transform)
 		{
-			Vector3Int mapPosition = tilemap.WorldToCell(child.position);
+			Vector3Int childPos = new Vector3Int(Mathf.RoundToInt(child.position.x), Mathf.RoundToInt(child.position.y), 0);
+			Vector3Int mapPosition = tilemap.WorldToCell(childPos);
 			allPlayerUnits.Add(mapPosition, child.GetComponent<Unit>());
 		}
 	}

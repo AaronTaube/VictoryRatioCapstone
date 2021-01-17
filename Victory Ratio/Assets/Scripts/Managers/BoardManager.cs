@@ -5,14 +5,14 @@ using UnityEngine.Tilemaps;
 
 public class BoardManager : MonoBehaviour
 {
+	[Header("Board")]
 	[SerializeField]
 	private Tilemap movementBoard;
 	[SerializeField]
 	private Tile moveTile;
+	
 
-	[SerializeField]
-	private Tile[] tiles;
-
+	[Header("Managers")]
 	[SerializeField]
 	UnitsManager unitsManager;
 	[SerializeField]
@@ -23,9 +23,9 @@ public class BoardManager : MonoBehaviour
 	[SerializeField]
 	private Grid grid;
 
+	[Header("Raycast Variables")]
 	[SerializeField]
 	private Camera camera;
-
 	[SerializeField]
 	private LayerMask boardMask;
 	[SerializeField]
@@ -38,26 +38,20 @@ public class BoardManager : MonoBehaviour
 	Vector3Int unitPos;
 	Vector3Int targetPos;
 	int unitMoveRange = 3;
-	
+
+	[Header("Game Config")]
+	[SerializeField]
+	float moveSpeed = .15f;
 	/// <summary>
 	/// Checks player clicks to handle unit selection and actions. 
 	/// </summary>
 	void Update()
 	{
+
 		if (Input.GetMouseButtonDown(0))
 		{
 			RaycastHit2D boardHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, boardMask);
 			RaycastHit2D movementHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, moveOptionMask);
-			/*if (movementHit.collider != null)
-			{
-				Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
-				Vector3Int clickPosition = movementBoard.WorldToCell(mouseWorldPos);
-				targetPos = clickPosition;
-				Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
-				//Run method to start movement
-				MoveUnit();
-				return;
-			}*/
 
 			if (boardHit.collider != null)
 			{
@@ -82,17 +76,47 @@ public class BoardManager : MonoBehaviour
 			}
 		}
 	}
+	/// <summary>
+	/// Begins the process of units moving through the path, then resets the movement tiles
+	/// </summary>
 	private void MoveUnit()
 	{
 		Transform selectedUnit = unitsManager.GetPlayerUnit(unitPos).transform;
+		StartCoroutine(MoveBetweenNodes(selectedUnit, moveSpeed));
+		ResetMovementTiles();
+	}
+	/// <summary>
+	/// Coroutine to run through Astar path one node at a time
+	/// without halting the game. 
+	/// Updates player dictionary at completion.
+	/// </summary>
+	/// <param name="unit"></param>
+	/// <param name="time"></param>
+	/// <returns></returns>
+	private IEnumerator MoveBetweenNodes(Transform unit, float time)
+	{
 		Queue<Vector3Int> path = GetPath();
 		while(path.Count > 0)
 		{
-			selectedUnit.transform.position = path.Dequeue();
+			float elapsedTime = 0;
+			Vector3 nextPos = path.Dequeue();
+			Vector3 startPos = unit.position;
+			Debug.Log("Next pos = " + nextPos);
+			while (elapsedTime < time)
+			{
+				unit.position = Vector3.Lerp(startPos, nextPos, (elapsedTime / time));
+				elapsedTime += Time.deltaTime;
+				yield return new WaitForEndOfFrame();
+			}
+			
 		}
 		unitsManager.UpdatePlayerDict();
-		ResetMovementTiles();
 	}
+	/// <summary>
+	/// Calls our Astar algorithm to get the movement path and converts it to a form
+	/// usable by our board manager for the purpose of moving the unit. 
+	/// </summary>
+	/// <returns></returns>
 	Queue<Vector3Int> GetPath()
 	{
 		Stack<Vector3Int> tilemapPath = pathfinder.GetPath(unitPos, targetPos);
@@ -147,4 +171,5 @@ public class BoardManager : MonoBehaviour
 		validMoves = new Dictionary<Vector3Int, Node>();
 		
 	}
+
 }

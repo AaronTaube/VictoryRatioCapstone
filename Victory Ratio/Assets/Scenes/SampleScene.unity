@@ -166,7 +166,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementBoard: {fileID: 191720010}
   moveTile: {fileID: 11400000, guid: 3e018fd6221b85e43b3ed35b7d2d21d7, type: 2}
-  tiles: []
   unitsManager: {fileID: 155222890}
   movesManager: {fileID: 1748546120}
   pathfinder: {fileID: 2113353770}
@@ -178,6 +177,7 @@ MonoBehaviour:
   moveOptionMask:
     serializedVersion: 2
     m_Bits: 512
+  moveSpeed: 0.15
 --- !u!1 &128646731
 GameObject:
   m_ObjectHideFlags: 0
@@ -2566,7 +2566,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2e940e95327c6d14cae4826592f40d57, type: 2}
   - {fileID: 11400000, guid: 0114d26c656f7ff409722af5d343c1ca, type: 2}
   - {fileID: 11400000, guid: 286767dc05c877a46a159c1afd1d55fd, type: 2}
-  unitsManager: {fileID: 0}
   camera: {fileID: 519420031}
   mask:
     serializedVersion: 2
