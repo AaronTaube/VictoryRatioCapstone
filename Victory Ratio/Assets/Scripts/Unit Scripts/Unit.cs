@@ -1,15 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[ExecuteAlways]
 public class Unit : MonoBehaviour
 {
-    [SerializeField]
+	[Header("Stats")]
+	[SerializeField]
     int count;
 	[SerializeField]
 	UnitType type;
-	[SerializeField]
 	Alignment alignment;
+
+	[Header("Sprites")]
+	[SerializeField] Sprite notFound;
+	[SerializeField] Sprite playerSpear, playerAxe, playerSword, playerArcher, playerCavalry;
+	[SerializeField] Sprite enemySpear, enemyAxe, enemySword, enemyArcher, enemyCavalry;
+
+	SpriteRenderer thisSpriteRenderer;
 
 	Vector3Int boardPos;
 
@@ -21,7 +29,107 @@ public class Unit : MonoBehaviour
 	private void Start()
 	{
 		SetMovementSpeed();
+		thisSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+		SetSprite();
+		
 	}
+	// Update is called once per frame
+	void Update()
+	{
+		//Only run SetSprite to load the map or on editor updates. No need to constantly run it in play.
+		if (!Application.IsPlaying(gameObject))
+		{
+			SetSprite();
+		}
+	}
+	void SetSprite()
+	{
+		SetAlignment();
+		switch (alignment)
+		{
+			case Alignment.Player:
+				SetPlayerSprite();
+				break;
+			case Alignment.Enemy:
+				SetEnemySprite();
+				break;
+			default:
+				SetUnitErrorSprite();
+				break;
+		}
+	}
+	void SetPlayerSprite()
+	{
+		switch (type)
+		{
+			case UnitType.Spear:
+				thisSpriteRenderer.sprite = playerSpear;
+				break;
+			case UnitType.Axe:
+				thisSpriteRenderer.sprite = playerAxe;
+				break;
+			case UnitType.Sword:
+				thisSpriteRenderer.sprite = playerSword;
+				break;
+			/*case UnitType.Archer:
+				thisSpriteRenderer.sprite = playerArcher;
+				break;
+			case UnitType.Cavalry:
+				thisSpriteRenderer.sprite = playerCavalry;
+				break;*/
+			default:
+				SetUnitErrorSprite();
+				break;
+		}
+	}
+	void SetEnemySprite()
+	{
+		
+		switch (type)
+		{
+			case UnitType.Spear:
+				thisSpriteRenderer.sprite = enemySpear;
+				break;
+			case UnitType.Axe:
+				thisSpriteRenderer.sprite = enemyAxe;
+				break;
+			case UnitType.Sword:
+				thisSpriteRenderer.sprite = enemySword;
+				break;
+			/*case UnitType.Archer:
+				thisSpriteRenderer.sprite = enemyArcher;
+				break;
+			case UnitType.Cavalry:
+				thisSpriteRenderer.sprite = enemyCavalry;
+				break;*/
+			default:
+				SetUnitErrorSprite();
+				break;
+		}
+	}
+	void SetUnitErrorSprite()
+	{
+		thisSpriteRenderer.sprite = notFound;
+	}
+	void SetAlignment()
+	{
+		string parentTag = transform.parent.tag;
+		switch (parentTag)
+		{
+			case "PlayerUnits":
+				alignment = Alignment.Player;
+				break;
+			case "EnemyUnits":
+				alignment = Alignment.Enemy;
+				break;
+			case "NPCUnits":
+				break;
+			default:
+				break;
+		}
+		
+	}
+
 	/// <summary>
 	/// All classes of unit in game. Will be referenced to find type advantages and other stats. 
 	/// </summary>
@@ -71,13 +179,5 @@ public class Unit : MonoBehaviour
                 movementSpeed = defaultMovementSpeed;
                 break;
         }
-
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
