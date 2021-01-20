@@ -180,4 +180,8 @@ public class Unit : MonoBehaviour
                 break;
         }
     }
+	public int GetCount()
+	{
+		return count;
+	}
 }

@@ -22,8 +22,10 @@ public class UnitsManager : MonoBehaviour
     private LayerMask mask;
 
     private Dictionary<Vector3Int, Unit> allPlayerUnits = new Dictionary<Vector3Int, Unit>();
-    // Start is called before the first frame update
-    void Start()
+	private Dictionary<Vector3Int, Unit> allEnemyUnits = new Dictionary<Vector3Int, Unit>();
+	private Dictionary<Vector3Int, Unit> allNPCUnits = new Dictionary<Vector3Int, Unit>();
+	// Start is called before the first frame update
+	void Start()
     {
         PopulateUnitDicts();
         
@@ -58,21 +60,9 @@ public class UnitsManager : MonoBehaviour
     void PopulateUnitDicts()
 	{
 		UpdatePlayerDict();
-        /*foreach (Transform child in enemyUnits.transform)
-        {
-            Vector3Int intPosition = Vector3Int.FloorToInt(child.position);
-            allPlayerUnits.Add(intPosition, child.GetComponent<Unit>());
-        }
-        foreach (Transform child in npcUnits.transform)
-        {
-            Vector3Int intPosition = Vector3Int.FloorToInt(child.position);
-            allPlayerUnits.Add(intPosition, child.GetComponent<Unit>());
-        }*/
-        foreach (KeyValuePair<Vector3Int, Unit> unit in allPlayerUnits)
-        {
-            Debug.Log(unit.Key);
-
-        }
+		UpdateEnemyDict();
+		UpdateNPCDict();
+        
     }
 	/// <summary>
 	/// Make sure all units under player control are tracked. 
@@ -90,9 +80,37 @@ public class UnitsManager : MonoBehaviour
 			allPlayerUnits.Add(mapPosition, child.GetComponent<Unit>());
 		}
 	}
+	public void UpdateEnemyDict()
+	{
+		allEnemyUnits = new Dictionary<Vector3Int, Unit>();
+		foreach (Transform child in enemyUnits.transform)
+		{
+			Vector3Int childPos = new Vector3Int(Mathf.RoundToInt(child.position.x), Mathf.RoundToInt(child.position.y), 0);
+			Vector3Int mapPosition = tilemap.WorldToCell(childPos);
+			allEnemyUnits.Add(mapPosition, child.GetComponent<Unit>());
+		}
+	}
+	public void UpdateNPCDict()
+	{
+		allNPCUnits = new Dictionary<Vector3Int, Unit>();
+		foreach (Transform child in npcUnits.transform)
+		{
+			Vector3Int childPos = new Vector3Int(Mathf.RoundToInt(child.position.x), Mathf.RoundToInt(child.position.y), 0);
+			Vector3Int mapPosition = tilemap.WorldToCell(childPos);
+			allNPCUnits.Add(mapPosition, child.GetComponent<Unit>());
+		}
+	}
 	public Dictionary<Vector3Int, Unit> GetAllPlayerUnits()
 	{
 		return allPlayerUnits;
+	}
+	public Dictionary<Vector3Int, Unit> GetAllEnemyUnits()
+	{
+		return allEnemyUnits;
+	}
+	public Dictionary<Vector3Int, Unit> GetAllNPCUnits()
+	{
+		return allNPCUnits;
 	}
 	public Unit GetPlayerUnit(Vector3Int cellPos)
 	{
