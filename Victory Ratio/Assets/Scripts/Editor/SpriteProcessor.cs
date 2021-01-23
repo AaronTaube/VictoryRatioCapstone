@@ -17,7 +17,5 @@ public class SpriteProcessor : AssetPostprocessor
 			textureImporter.spritePixelsPerUnit = 64;
 			textureImporter.filterMode = FilterMode.Point;
 		}
-		
-		
     }
 }

@@ -40,6 +40,7 @@ public class Unit : MonoBehaviour
 		if (!Application.IsPlaying(gameObject))
 		{
 			SetSprite();
+			AdjustPos();
 		}
 	}
 	void SetSprite()
@@ -183,5 +184,16 @@ public class Unit : MonoBehaviour
 	public int GetCount()
 	{
 		return count;
+	}
+	/// <summary>
+	/// Snaps the unit to it's position in the grid.
+	/// Currently used only in editor to keep developer from poorly placing units.
+	/// May also be used after running lerp functions if the amount that lerp falls short 
+	/// of final position by proves significant. If not, can probably make this private. 
+	/// </summary>
+	public void AdjustPos()
+	{
+		Vector3Int adjustedPos = new Vector3Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
+		transform.position = adjustedPos;
 	}
 }
