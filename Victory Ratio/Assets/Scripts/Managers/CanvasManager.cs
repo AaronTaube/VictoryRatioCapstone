@@ -12,6 +12,10 @@ public class CanvasManager : MonoBehaviour
 	[SerializeField]
 	GameObject allUnits;
 	Transform playerUnits, enemyUnits, npcUnits;
+
+	Dictionary<GameObject, GameObject> CountUnitPairs;
+
+	List<GameObject> countInstances = new List<GameObject>();
 	
     // Start is called before the first frame update
     void Start()
@@ -58,5 +62,15 @@ public class CanvasManager : MonoBehaviour
 		GameObject go = Instantiate(countPrefab, transform);
 		go.transform.position = new Vector3(unit.position.x + .5f, unit.position.y + .5f, unit.position.z);
 		go.GetComponentInChildren<TextMeshProUGUI>().SetText(count.ToString());
+		countInstances.Add(go);
+
+	}
+	void ClearCounts()
+	{
+		foreach(GameObject go in countInstances)
+		{
+			Destroy(go);
+		}
+		countInstances = new List<GameObject>();
 	}
 }
