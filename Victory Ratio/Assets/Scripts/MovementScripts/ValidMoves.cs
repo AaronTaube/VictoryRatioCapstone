@@ -219,5 +219,15 @@ public class ValidMoves : MonoBehaviour
 	{
 		return validAttacks;
 	}
+	public Dictionary<Vector3Int, Node> GetValidAttacks(Vector3Int startPos, int attackRange)
+	{
+		//validMoves = new Dictionary<Vector3Int, Node>();
+		this.startPos = startPos;
+		unitMoveRange = 0;
+		unitAttackRange = attackRange;
+		Algorithm();
+
+		return validAttacks;
+	}
 
 }

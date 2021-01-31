@@ -166,6 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementBoard: {fileID: 191720010}
   moveTile: {fileID: 11400000, guid: 3e018fd6221b85e43b3ed35b7d2d21d7, type: 2}
+  attackTile: {fileID: 11400000, guid: 429b1ea53a008f24a82911489e41ce5d, type: 2}
   unitsManager: {fileID: 155222890}
   movesManager: {fileID: 1748546120}
   pathfinder: {fileID: 2113353770}

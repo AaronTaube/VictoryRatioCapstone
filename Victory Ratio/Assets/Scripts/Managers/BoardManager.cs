@@ -115,6 +115,7 @@ public class BoardManager : MonoBehaviour
 			
 		}
 		unitsManager.UpdatePlayerDict();
+
 	}
 	/// <summary>
 	/// Calls our Astar algorithm to get the movement path and converts it to a form
@@ -164,6 +165,18 @@ public class BoardManager : MonoBehaviour
 
 		movementBoard.SetTile(unitPos, null);
 
+	}
+	public void CreateAttackTiles(Vector3Int startPos)
+	{
+		validAttacks = movesManager.GetValidAttacks(startPos, unitAttackRange);
+		
+		foreach (var tile in validAttacks)
+		{
+			Vector3Int pos = tile.Key;//validMoves.Pop().Position;
+			SetToAttackTile(pos);
+		}
+
+		movementBoard.SetTile(unitPos, null);
 	}
 	public void SetToMovementTile(Vector3Int position)
 	{
