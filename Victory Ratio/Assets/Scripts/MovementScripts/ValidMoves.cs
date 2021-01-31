@@ -15,9 +15,11 @@ public class ValidMoves : MonoBehaviour
 	private HashSet<Node> openList;
 	private HashSet<Node> closedList;
 	private Dictionary<Vector3Int, Node> validMoves;
+	private Dictionary<Vector3Int, Node> validAttacks;
 
 	private Dictionary<Vector3Int, Node> allNodes = new Dictionary<Vector3Int, Node>();
-	private int unitRange;
+	private int unitMoveRange;
+	private int unitAttackRange;
 	
 	/// <summary>
 	/// 
@@ -32,6 +34,7 @@ public class ValidMoves : MonoBehaviour
 		closedList = new HashSet<Node>();
 
 		validMoves = new Dictionary<Vector3Int, Node>();
+		validAttacks = new Dictionary<Vector3Int, Node>();
 		//Adding start to the open list
 		openList.Add(current);
 	}
@@ -167,9 +170,13 @@ public class ValidMoves : MonoBehaviour
 
 	private void AddToValid(Node current)
 	{
-		if (current.G <= unitRange * 10)
+		if (current.G <= unitMoveRange * 10)
 		{
 			validMoves.Add(current.Position, current);
+		}
+		if (current.G <= (unitMoveRange + unitAttackRange) * 10 && !validMoves.ContainsKey(current.Position))
+		{
+			validAttacks.Add(current.Position, current);
 		}
 	}
 	/// <summary>
@@ -198,14 +205,19 @@ public class ValidMoves : MonoBehaviour
 	/// </summary>
 	/// <param name="movement"></param>
 	/// <returns></returns>
-	public Dictionary<Vector3Int, Node> GetValidMoves(Vector3Int startPos, int range)
+	public Dictionary<Vector3Int, Node> GetValidMoves(Vector3Int startPos, int moveRange, int attackRange)
 	{
 		//validMoves = new Dictionary<Vector3Int, Node>();
 		this.startPos = startPos;
-		unitRange = range;
+		unitMoveRange = moveRange;
+		unitAttackRange = attackRange;
 		Algorithm();
 		
 		return validMoves;
+	}
+	public Dictionary<Vector3Int, Node> GetValidAttacks()
+	{
+		return validAttacks;
 	}
 
 }

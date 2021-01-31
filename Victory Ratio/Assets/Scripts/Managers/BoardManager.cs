@@ -10,7 +10,9 @@ public class BoardManager : MonoBehaviour
 	private Tilemap movementBoard;
 	[SerializeField]
 	private Tile moveTile;
-	
+	[SerializeField]
+	private Tile attackTile;
+
 
 	[Header("Managers")]
 	[SerializeField]
@@ -33,11 +35,13 @@ public class BoardManager : MonoBehaviour
 
 	private List<GameObject> movementTiles = new List<GameObject>();
 	Dictionary<Vector3Int, Node> validMoves = new Dictionary<Vector3Int, Node>();
+	Dictionary<Vector3Int, Node> validAttacks = new Dictionary<Vector3Int, Node>();
 
 	//Unit info
 	Vector3Int unitPos;
 	Vector3Int targetPos;
 	int unitMoveRange = 3;
+	int unitAttackRange = 1;
 
 	[Header("Game Config")]
 	[SerializeField]
@@ -145,19 +149,29 @@ public class BoardManager : MonoBehaviour
 	/// <param name="startPos"></param>
 	public void CreateMovementTiles(Vector3Int startPos)
 	{
-		validMoves = movesManager.GetValidMoves(startPos, unitMoveRange);
-
+		validMoves = movesManager.GetValidMoves(startPos, unitMoveRange, unitAttackRange);
+		validAttacks = movesManager.GetValidAttacks();
 		foreach (var tile in validMoves)
 		{
 			Vector3Int pos = tile.Key;//validMoves.Pop().Position;
 			SetToMovementTile(pos);
 		}
+		foreach (var tile in validAttacks)
+		{
+			Vector3Int pos = tile.Key;//validMoves.Pop().Position;
+			SetToAttackTile(pos);
+		}
+
 		movementBoard.SetTile(unitPos, null);
 
 	}
 	public void SetToMovementTile(Vector3Int position)
 	{
 		movementBoard.SetTile(position, moveTile);
+	}
+	public void SetToAttackTile(Vector3Int position)
+	{
+		movementBoard.SetTile(position, attackTile);
 	}
 	/// <summary>
 	/// Clear board of movement tiles
@@ -168,8 +182,13 @@ public class BoardManager : MonoBehaviour
 		{
 			movementBoard.SetTile(tile.Key, null);
 		}
+		foreach (var tile in validAttacks)
+		{
+			movementBoard.SetTile(tile.Key, null);
+		}
 		validMoves = new Dictionary<Vector3Int, Node>();
-		
+		validAttacks = new Dictionary<Vector3Int, Node>();
+
 	}
 
 }
