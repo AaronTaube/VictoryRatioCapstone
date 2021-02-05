@@ -4,8 +4,30 @@ using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+	public GameState phase { get; set; }
+	Turn turn { get; set; }
+	/// <summary>
+	/// Which state of gameplay the game is in.
+	/// </summary>
+	public enum GameState
+	{
+		SceneOpen,
+		MovementSelection,
+		AttackSelection,
+		Combat,
+		TurnSwitch
+	}
+	/// <summary>
+	/// Which unit group is taking it's turn
+	/// </summary>
+	public enum Turn
+	{
+		Player,
+		Enemy,
+		NPC
+	}
+	// Start is called before the first frame update
+	void Start()
     {
         
     }

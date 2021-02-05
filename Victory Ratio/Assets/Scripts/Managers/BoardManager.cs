@@ -43,9 +43,19 @@ public class BoardManager : MonoBehaviour
 	int unitMoveRange = 3;
 	int unitAttackRange = 1;
 
+	private GameStateManager stateManager;
+
 	[Header("Game Config")]
 	[SerializeField]
 	float moveSpeed = .15f;
+
+	private void Start()
+	{
+		stateManager = FindObjectOfType<GameStateManager>();
+		stateManager.phase = GameStateManager.GameState.MovementSelection;
+		Debug.Log(stateManager.phase);
+	}
+
 	/// <summary>
 	/// Checks player clicks to handle unit selection and actions. 
 	/// </summary>

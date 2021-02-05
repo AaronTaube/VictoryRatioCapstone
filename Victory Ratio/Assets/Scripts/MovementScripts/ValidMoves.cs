@@ -215,10 +215,20 @@ public class ValidMoves : MonoBehaviour
 		
 		return validMoves;
 	}
+	/// <summary>
+	/// Get outer range of attacks for a unit being moved.
+	/// </summary>
+	/// <returns></returns>
 	public Dictionary<Vector3Int, Node> GetValidAttacks()
 	{
 		return validAttacks;
 	}
+	/// <summary>
+	/// Get all attack tiles within range of unit that has been moved.
+	/// </summary>
+	/// <param name="startPos"></param>
+	/// <param name="attackRange"></param>
+	/// <returns></returns>
 	public Dictionary<Vector3Int, Node> GetValidAttacks(Vector3Int startPos, int attackRange)
 	{
 		//validMoves = new Dictionary<Vector3Int, Node>();
