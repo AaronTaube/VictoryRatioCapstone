@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameStateManager : MonoBehaviour
 {
 	public GameState phase { get; set; }
-	Turn turn { get; set; }
+	public Turn turn { get; set; }
 	/// <summary>
 	/// Which state of gameplay the game is in.
 	/// </summary>

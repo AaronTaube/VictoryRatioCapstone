@@ -51,8 +51,10 @@ public class BoardManager : MonoBehaviour
 
 	private void Start()
 	{
+		//currently setting it to start as player turn and movement phase, will likely not be the case later.
 		stateManager = FindObjectOfType<GameStateManager>();
 		stateManager.phase = GameStateManager.GameState.MovementSelection;
+		stateManager.turn = GameStateManager.Turn.Player;
 		Debug.Log(stateManager.phase);
 	}
 
@@ -61,7 +63,62 @@ public class BoardManager : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
+		switch (stateManager.turn)
+		{
+			case GameStateManager.Turn.Player:
+				PlayerTurnLogic();
+				break;
+			case GameStateManager.Turn.Enemy:
+				EnemyTurnLogic();
+				break;
+			case GameStateManager.Turn.NPC:
+				NPCTurnLogic();
+				break;
+			default:
+				break;
 
+		}
+		
+		
+	}
+	#region Turn States
+	/// <summary>
+	/// Directs logic based on gamestate
+	/// </summary>
+	void PlayerTurnLogic()
+	{
+		switch (stateManager.phase)
+		{
+			case GameStateManager.GameState.MovementSelection:
+				RunMovementControls();
+				break;
+			case GameStateManager.GameState.AttackSelection:
+				if (validAttacks.Count == 0) CreateAttackTiles(unitPos);
+				RunAttackControls();
+				break;
+			default:
+				break;
+		}
+	}
+	/// <summary>
+	/// Will likely outsource to another class to handle AI
+	/// </summary>
+	void EnemyTurnLogic()
+	{
+
+	}
+	/// <summary>
+	/// Will likely outsource to another class to handle AI
+	/// </summary>
+	void NPCTurnLogic()
+	{
+
+	}
+	#endregion
+
+	#region Movement Code
+	private void RunMovementControls()
+	{
 		if (Input.GetMouseButtonDown(0))
 		{
 			RaycastHit2D boardHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, boardMask);
@@ -69,7 +126,7 @@ public class BoardManager : MonoBehaviour
 
 			if (boardHit.collider != null)
 			{
-				
+
 				Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
 				Vector3Int clickPosition = movementBoard.WorldToCell(mouseWorldPos);
 				if (validMoves.ContainsKey(clickPosition))
@@ -86,7 +143,7 @@ public class BoardManager : MonoBehaviour
 					unitPos = clickPosition;
 					CreateMovementTiles(clickPosition);
 				}
-				
+
 			}
 		}
 	}
@@ -124,8 +181,20 @@ public class BoardManager : MonoBehaviour
 			}
 			
 		}
-		unitsManager.UpdatePlayerDict();
+		
+		EndOfMovementUpdates(unit);
+		
 
+	}
+	/// <summary>
+	/// Update unit positions and move to attack phase
+	/// </summary>
+	void EndOfMovementUpdates(Transform unit)
+	{
+		unitsManager.UpdatePlayerDict();
+		unitPos = new Vector3Int(Mathf.RoundToInt(unit.position.x), Mathf.RoundToInt(unit.position.y), 0);
+		stateManager.phase = GameStateManager.GameState.AttackSelection;
+		Debug.Log(stateManager.phase);
 	}
 	/// <summary>
 	/// Calls our Astar algorithm to get the movement path and converts it to a form
@@ -176,6 +245,65 @@ public class BoardManager : MonoBehaviour
 		movementBoard.SetTile(unitPos, null);
 
 	}
+	public void SetToMovementTile(Vector3Int position)
+	{
+		movementBoard.SetTile(position, moveTile);
+	}
+	/// <summary>
+	/// Clear board of movement tiles
+	/// </summary>
+	public void ResetMovementTiles()
+	{
+		foreach (var tile in validMoves)
+		{
+			movementBoard.SetTile(tile.Key, null);
+		}
+		foreach (var tile in validAttacks)
+		{
+			movementBoard.SetTile(tile.Key, null);
+		}
+		validMoves = new Dictionary<Vector3Int, Node>();
+		validAttacks = new Dictionary<Vector3Int, Node>();
+
+	}
+	#endregion
+
+	#region Attack Code
+	private void RunAttackControls()
+	{
+
+		if (Input.GetMouseButtonDown(0))
+		{
+			RaycastHit2D boardHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, boardMask);
+			RaycastHit2D movementHit = Physics2D.Raycast(camera.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, moveOptionMask);
+
+			if (boardHit.collider != null)
+			{
+
+				Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
+				Vector3Int clickPosition = movementBoard.WorldToCell(mouseWorldPos);
+				if (validAttacks.ContainsKey(clickPosition) && 
+					unitsManager.GetAllEnemyUnits().ContainsKey(clickPosition))
+				{
+					targetPos = clickPosition;
+					Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
+					AttackUnit();
+					return;
+				}
+				/*if (SelectableUnitClicked(clickPosition))
+				{
+					Debug.Log("selectable");
+					unitPos = clickPosition;
+					CreateMovementTiles(clickPosition);
+				}*/
+
+			}
+		}
+	}
+	private void AttackUnit()
+	{
+		Debug.Log("ATTACK");
+	}
 	public void CreateAttackTiles(Vector3Int startPos)
 	{
 		validAttacks = movesManager.GetValidAttacks(startPos, unitAttackRange);
@@ -188,30 +316,11 @@ public class BoardManager : MonoBehaviour
 
 		movementBoard.SetTile(unitPos, null);
 	}
-	public void SetToMovementTile(Vector3Int position)
-	{
-		movementBoard.SetTile(position, moveTile);
-	}
+	
 	public void SetToAttackTile(Vector3Int position)
 	{
 		movementBoard.SetTile(position, attackTile);
 	}
-	/// <summary>
-	/// Clear board of movement tiles
-	/// </summary>
-	public void ResetMovementTiles()
-	{
-		foreach(var tile in validMoves)
-		{
-			movementBoard.SetTile(tile.Key, null);
-		}
-		foreach (var tile in validAttacks)
-		{
-			movementBoard.SetTile(tile.Key, null);
-		}
-		validMoves = new Dictionary<Vector3Int, Node>();
-		validAttacks = new Dictionary<Vector3Int, Node>();
-
-	}
+	#endregion
 
 }
