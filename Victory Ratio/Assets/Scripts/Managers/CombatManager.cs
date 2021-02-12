@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    /*// Start is called before the first frame update
     void Start()
     {
         
@@ -15,4 +15,76 @@ public class CombatManager : MonoBehaviour
     {
         
     }
+	*/
+	/// <summary>
+	/// Initiates combat sequence
+	/// </summary>
+	/// <param name="attacker"></param>
+	/// <param name="defender"></param>
+	public void Fight(Unit attacker, Unit defender)
+	{
+		double attackerStrength = CalculateStrength(attacker);
+		double defenderStrenth = CalculateStrength(defender);
+		double odds = CalculateVictoryOdds(attackerStrength, defenderStrenth);
+		bool hasAdvantage = RollAdvantage(attackerStrength,  odds);
+		
+		if (hasAdvantage)
+		{
+			//Attacker swings first
+			Attack(attacker, defender);
+			Attack(defender, attacker);
+		}
+		else
+		{
+			//Defender swings first
+			Attack(defender, attacker);
+			Attack(attacker, defender);
+		}
+	}
+	/// <summary>
+	/// Deal damage to unit and play animations. May need to make this an IEnumerator or otherwise tie it to keyframes
+	/// </summary>
+	/// <param name="damageDealer"></param>
+	/// <param name="damageTaker"></param>
+	private void Attack(Unit damageDealer, Unit damageTaker)
+	{
+
+	}
+	/// <summary>
+	/// TODO: Determine strength based on unit count and which tile the unit is in. 
+	/// </summary>
+	/// <param name="unitCount"></param>
+	/// <returns></returns>
+	private double CalculateStrength(Unit unit)
+	{
+		double result;
+
+		result = unit.GetCount();
+
+		return result;
+	}
+	/// <summary>
+	/// Calculates chance of "Victory", which, in this context, 
+	/// means the chance that this group of units will get to deal damage first.
+	/// </summary>
+	/// <param name="attackStrength"></param>
+	/// <param name="defenseStrength"></param>
+	/// <returns></returns>
+	private double CalculateVictoryOdds(double attackStrength, double defenseStrength)
+	{
+		double victoryOdds = 0;
+		double totalStrength = attackStrength + defenseStrength;
+		victoryOdds = attackStrength / defenseStrength;
+		return victoryOdds;
+	}
+	private bool RollAdvantage(double strength, double odds)
+	{
+		System.Random rand = new System.Random();
+		double roll = rand.NextDouble();
+		if (roll < strength)
+			return true;
+		else
+			return false;
+
+	}
 }
