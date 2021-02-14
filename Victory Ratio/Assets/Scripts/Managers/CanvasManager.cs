@@ -44,6 +44,7 @@ public class CanvasManager : MonoBehaviour
     void Update()
     {
 		CountsFollowUnits();
+		UpdateUnitCounts();//May make this called as needed later.
     }
 	/// <summary>
 	/// 
@@ -62,6 +63,15 @@ public class CanvasManager : MonoBehaviour
 			}
 		}
 	}
+	void UpdateUnitCounts()
+	{
+		foreach(var pair in countUnitPairs)
+		{
+			Unit thisUnit = pair.Key.GetComponent<Unit>();
+			TextMeshProUGUI thisCount = pair.Value.GetComponentInChildren<TextMeshProUGUI>();
+			thisCount.text = thisUnit.GetCount().ToString();
+		}
+	}
 	/// <summary>
 	/// Uses dictionary to link canvas count objects to the units,
 	/// as well as tracking each in a list.
@@ -70,11 +80,11 @@ public class CanvasManager : MonoBehaviour
 	/// <param name="count"></param>
 	void MakeUnitCountPair(Transform unit, int count)
 	{
-		GameObject go = Instantiate(countPrefab, transform);
-		go.transform.position = new Vector3(unit.position.x + .5f, unit.position.y + .5f, unit.position.z);
-		go.GetComponentInChildren<TextMeshProUGUI>().SetText(count.ToString());
-		countUnitPairs.Add(unit.gameObject, go);
-		countInstances.Add(go);
+		GameObject countDisplay = Instantiate(countPrefab, transform);
+		countDisplay.transform.position = new Vector3(unit.position.x + .5f, unit.position.y + .5f, unit.position.z);
+		countDisplay.GetComponentInChildren<TextMeshProUGUI>().SetText(count.ToString());
+		countUnitPairs.Add(unit.gameObject, countDisplay);
+		countInstances.Add(countDisplay);
 
 	}
 	/// <summary>

@@ -16,6 +16,9 @@ public class SpriteProcessor : AssetPostprocessor
 			textureImporter.textureType = TextureImporterType.Sprite;
 			textureImporter.spritePixelsPerUnit = 64;
 			textureImporter.filterMode = FilterMode.Point;
+			textureImporter.textureCompression = TextureImporterCompression.Uncompressed;//Don't yet know if this works...
+			/*TextureImporterPlatformSettings defaults = textureImporter.GetDefaultPlatformTextureSettings();
+			defaults.textureCompression = TextureImporterCompression.Uncompressed;*///Alternative
 		}
     }
 }

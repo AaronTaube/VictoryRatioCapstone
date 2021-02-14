@@ -20,6 +20,8 @@ public class BoardManager : MonoBehaviour
 	[SerializeField]
 	ValidMoves movesManager;
 	[SerializeField]
+	CombatManager combatManager;
+	[SerializeField]
 	private Astar pathfinder;
 
 	[SerializeField]
@@ -139,7 +141,6 @@ public class BoardManager : MonoBehaviour
 				}
 				if (SelectableUnitClicked(clickPosition))
 				{
-					Debug.Log("selectable");
 					unitPos = clickPosition;
 					CreateMovementTiles(clickPosition);
 				}
@@ -302,6 +303,7 @@ public class BoardManager : MonoBehaviour
 	}
 	private void AttackUnit()
 	{
+		combatManager.Fight(unitPos, targetPos);
 		Debug.Log("ATTACK");
 	}
 	public void CreateAttackTiles(Vector3Int startPos)

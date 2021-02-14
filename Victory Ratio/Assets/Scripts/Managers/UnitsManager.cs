@@ -116,4 +116,15 @@ public class UnitsManager : MonoBehaviour
 	{
 		return allPlayerUnits[cellPos];
 	}
+	public Unit GetUnit(Vector3 worldPos)
+	{
+		Vector3Int cellPos = tilemap.WorldToCell(worldPos);
+		if (allPlayerUnits.ContainsKey(cellPos))
+			return allPlayerUnits[cellPos];
+		else if (allEnemyUnits.ContainsKey(cellPos))
+			return allEnemyUnits[cellPos];
+		else
+			return allNPCUnits[cellPos];
+	}
+	
 }

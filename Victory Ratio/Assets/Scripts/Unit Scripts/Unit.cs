@@ -196,4 +196,9 @@ public class Unit : MonoBehaviour
 		Vector3Int adjustedPos = new Vector3Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
 		transform.position = adjustedPos;
 	}
+	public void TakeDamage()
+	{
+		if(count > 0)
+			count--;
+	}
 }
