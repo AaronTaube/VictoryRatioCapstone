@@ -289,6 +289,7 @@ public class BoardManager : MonoBehaviour
 					targetPos = clickPosition;
 					Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
 					AttackUnit();
+					EndCombatPhase();
 					return;
 				}
 				/*if (SelectableUnitClicked(clickPosition))
@@ -304,7 +305,13 @@ public class BoardManager : MonoBehaviour
 	private void AttackUnit()
 	{
 		combatManager.Fight(unitPos, targetPos);
-		Debug.Log("ATTACK");
+		//Debug.Log("ATTACK");
+
+	}
+	private void EndCombatPhase()
+	{
+		ResetMovementTiles();
+		stateManager.phase = GameStateManager.GameState.MovementSelection;
 	}
 	public void CreateAttackTiles(Vector3Int startPos)
 	{
