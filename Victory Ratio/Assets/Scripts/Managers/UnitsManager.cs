@@ -126,5 +126,24 @@ public class UnitsManager : MonoBehaviour
 		else
 			return allNPCUnits[cellPos];
 	}
+	public bool AnyPlayerMovesLeft()
+	{
+		foreach (var unit in allPlayerUnits)
+		{
+			if (!unit.Value.hasMoved)
+				return true;
+		}
+		return false;
+	}
+	/// <summary>
+	/// Reset unit tracking of if they've been moved this turn so next turn they can be moved again.
+	/// </summary>
+	public void ResetMoves()
+	{
+		foreach (var unit in allPlayerUnits)
+		{
+			unit.Value.hasMoved = false;
+		}
+	}
 	
 }

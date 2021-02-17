@@ -22,6 +22,7 @@ public class Unit : MonoBehaviour
 	Vector3Int boardPos;
 
 	int movementSpeed;
+	public bool hasMoved { get; set; } = false;
 
     int defaultMovementSpeed = 3;
     int cavalryMovementSpeed = 5;
