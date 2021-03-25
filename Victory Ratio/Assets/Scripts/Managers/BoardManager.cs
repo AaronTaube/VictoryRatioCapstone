@@ -167,6 +167,8 @@ public class BoardManager : MonoBehaviour
 	/// <returns></returns>
 	private IEnumerator MoveBetweenNodes(Transform unit, float time)
 	{
+		ParticleSystem dustEmitter = unit.GetComponentInChildren<ParticleSystem>();
+		dustEmitter.Play();
 		Queue<Vector3Int> path = GetPath();
 		while(path.Count > 0)
 		{
@@ -182,7 +184,7 @@ public class BoardManager : MonoBehaviour
 			}
 			
 		}
-		
+		dustEmitter.Stop();
 		EndOfMovementUpdates(unit);
 		
 
