@@ -330,6 +330,7 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 256
+  canvasManager: {fileID: 999803082}
 --- !u!1 &191720007
 GameObject:
   m_ObjectHideFlags: 0
