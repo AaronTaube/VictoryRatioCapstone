@@ -21,6 +21,9 @@ public class UnitsManager : MonoBehaviour
     [SerializeField]
     private LayerMask mask;
 
+	[SerializeField]
+	private CanvasManager canvasManager;
+
     private Dictionary<Vector3Int, Unit> allPlayerUnits = new Dictionary<Vector3Int, Unit>();
 	private Dictionary<Vector3Int, Unit> allEnemyUnits = new Dictionary<Vector3Int, Unit>();
 	private Dictionary<Vector3Int, Unit> allNPCUnits = new Dictionary<Vector3Int, Unit>();
@@ -126,6 +129,30 @@ public class UnitsManager : MonoBehaviour
 		else
 			return allNPCUnits[cellPos];
 	}
+	public void RemoveUnit(Unit unit)
+	{
+		canvasManager.RemoveUnitCountPair(unit.transform.gameObject);
+		if (unit.alignment == Unit.Alignment.Player)
+		{
+			allPlayerUnits.Remove(unit.boardPos);
+		}
+		if (unit.alignment == Unit.Alignment.Enemy)
+		{
+			allEnemyUnits.Remove(unit.boardPos);
+		}
+	}
+	public bool ContainsUnit(Vector3Int pos)
+	{
+		if (allPlayerUnits.ContainsKey(pos)) return true;
+		if (allEnemyUnits.ContainsKey(pos)) return true;
+		if (allNPCUnits.ContainsKey(pos)) return true;
+		return false;
+			
+	}
+	/// <summary>
+	/// Can be done more efficiently by starting to track 2 stacks of moved and unmoved units, but if the framerate holds up, we will keep it simple.
+	/// </summary>
+	/// <returns></returns>
 	public bool AnyPlayerMovesLeft()
 	{
 		foreach (var unit in allPlayerUnits)
@@ -142,7 +169,7 @@ public class UnitsManager : MonoBehaviour
 	{
 		foreach (var unit in allPlayerUnits)
 		{
-			unit.Value.hasMoved = false;
+			unit.Value.SetReady();
 		}
 	}
 	

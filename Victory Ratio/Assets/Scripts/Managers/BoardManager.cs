@@ -45,6 +45,7 @@ public class BoardManager : MonoBehaviour
 	int unitMoveRange = 3;
 	int unitAttackRange = 1;
 
+	private bool playerHasControl = true;
 	private GameStateManager stateManager;
 
 	[Header("Game Config")]
@@ -89,18 +90,22 @@ public class BoardManager : MonoBehaviour
 	/// </summary>
 	void PlayerTurnLogic()
 	{
-		switch (stateManager.phase)
+		if (playerHasControl)
 		{
-			case GameStateManager.GameState.MovementSelection:
-				RunMovementControls();
-				break;
-			case GameStateManager.GameState.AttackSelection:
-				if (validAttacks.Count == 0) CreateAttackTiles(unitPos);
-				RunAttackControls();
-				break;
-			default:
-				break;
+			switch (stateManager.phase)
+			{
+				case GameStateManager.GameState.MovementSelection:
+					RunMovementControls();
+					break;
+				case GameStateManager.GameState.AttackSelection:
+					if (validAttacks.Count == 0) CreateAttackTiles(unitPos);
+					RunAttackControls();
+					break;
+				default:
+					break;
+			}
 		}
+		
 	}
 	/// <summary>
 	/// Will likely outsource to another class to handle AI
@@ -141,6 +146,7 @@ public class BoardManager : MonoBehaviour
 				}
 				if (SelectableUnitClicked(clickPosition))
 				{
+					ResetMovementTiles();
 					unitPos = clickPosition;
 					CreateMovementTiles(clickPosition);
 				}
@@ -167,6 +173,7 @@ public class BoardManager : MonoBehaviour
 	/// <returns></returns>
 	private IEnumerator MoveBetweenNodes(Transform unit, float time)
 	{
+		playerHasControl = false;
 		ParticleSystem dustEmitter = unit.GetComponentInChildren<ParticleSystem>();
 		dustEmitter.Play();
 		Queue<Vector3Int> path = GetPath();
@@ -198,6 +205,7 @@ public class BoardManager : MonoBehaviour
 		unitPos = new Vector3Int(Mathf.RoundToInt(unit.position.x), Mathf.RoundToInt(unit.position.y), 0);
 		stateManager.phase = GameStateManager.GameState.AttackSelection;
 		Debug.Log(stateManager.phase);
+		playerHasControl = true;
 	}
 	/// <summary>
 	/// Calls our Astar algorithm to get the movement path and converts it to a form
@@ -223,7 +231,15 @@ public class BoardManager : MonoBehaviour
 	/// <returns></returns>
 	bool SelectableUnitClicked(Vector3Int position)
 	{
-		return unitsManager.GetAllPlayerUnits().ContainsKey(position);
+		Dictionary<Vector3Int, Unit> allUnits = unitsManager.GetAllPlayerUnits();
+		bool contain = allUnits.ContainsKey(position);
+		if (!contain) return false;
+		else
+		{
+			Unit unit = allUnits[position];
+			if (unit.hasMoved) return false;
+			else return true;
+		}
 	}
 	/// <summary>
 	/// Sets all tiles within range of a given unit position to be overlayed with a provided tile to indicate it is within range.
@@ -234,17 +250,18 @@ public class BoardManager : MonoBehaviour
 	{
 		validMoves = movesManager.GetValidMoves(startPos, unitMoveRange, unitAttackRange);
 		validAttacks = movesManager.GetValidAttacks();
+		RemoveOccupiedTiles(validMoves);
 		foreach (var tile in validMoves)
 		{
-			Vector3Int pos = tile.Key;//validMoves.Pop().Position;
+			Vector3Int pos = tile.Key;
 			SetToMovementTile(pos);
 		}
 		foreach (var tile in validAttacks)
 		{
-			Vector3Int pos = tile.Key;//validMoves.Pop().Position;
+			Vector3Int pos = tile.Key;
 			SetToAttackTile(pos);
 		}
-
+		validMoves.Remove(unitPos);
 		movementBoard.SetTile(unitPos, null);
 
 	}
@@ -269,6 +286,27 @@ public class BoardManager : MonoBehaviour
 		validAttacks = new Dictionary<Vector3Int, Node>();
 
 	}
+	void RemoveOccupiedTiles(Dictionary<Vector3Int, Node> moves)
+	{
+		Dictionary<Vector3Int, Unit> units = unitsManager.GetAllPlayerUnits();
+		foreach(KeyValuePair<Vector3Int, Unit> unit in units)
+		{
+			if (moves.ContainsKey(unit.Key))
+				moves.Remove(unit.Key);
+		}
+		units = unitsManager.GetAllEnemyUnits();
+		foreach (KeyValuePair<Vector3Int, Unit> unit in units)
+		{
+			if (moves.ContainsKey(unit.Key))
+				moves.Remove(unit.Key);
+		}
+		units = unitsManager.GetAllNPCUnits();
+		foreach (KeyValuePair<Vector3Int, Unit> unit in units)
+		{
+			if (moves.ContainsKey(unit.Key))
+				moves.Remove(unit.Key);
+		}
+	}
 	#endregion
 
 	#region Attack Code
@@ -292,7 +330,12 @@ public class BoardManager : MonoBehaviour
 					Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
 					AttackUnit();
 					EndCombatPhase();
+
 					return;
+				}
+				else if(unitPos == clickPosition)
+				{
+					EndCombatPhase();
 				}
 				/*if (SelectableUnitClicked(clickPosition))
 				{
@@ -314,6 +357,7 @@ public class BoardManager : MonoBehaviour
 	{
 		ResetMovementTiles();
 		stateManager.phase = GameStateManager.GameState.MovementSelection;
+		SetUnitMoved();
 	}
 	public void CreateAttackTiles(Vector3Int startPos)
 	{
@@ -333,5 +377,9 @@ public class BoardManager : MonoBehaviour
 		movementBoard.SetTile(position, attackTile);
 	}
 	#endregion
+	void SetUnitMoved()
+	{
 
+		unitsManager.GetUnit(unitPos).SetMoved();
+	}
 }

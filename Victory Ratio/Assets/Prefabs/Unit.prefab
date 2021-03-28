@@ -139,6 +139,8 @@ MonoBehaviour:
   enemySword: {fileID: 21300000, guid: c2b5ed24fed070a4e9f7b914de824244, type: 3}
   enemyArcher: {fileID: 21300000, guid: 7dc8cffc654d3b946950610866e268a7, type: 3}
   enemyCavalry: {fileID: 21300000, guid: e2bab1681ab02194eb6a93251499f96b, type: 3}
+  baseColor: {r: 1, g: 1, b: 1, a: 1}
+  movedColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
 --- !u!1 &2018077337607120575
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,8 @@ public class Unit : MonoBehaviour
     int count;
 	[SerializeField]
 	UnitType type;
-	Alignment alignment;
+
+	public Alignment alignment { get; private set; }
 
 	[Header("Sprites")]
 	[SerializeField] Sprite notFound;
@@ -19,7 +20,13 @@ public class Unit : MonoBehaviour
 
 	SpriteRenderer thisSpriteRenderer;
 
-	Vector3Int boardPos;
+	UnitsManager unitManager;
+
+	[Header("UI")]
+	[SerializeField] Color baseColor;
+	[SerializeField] Color movedColor;
+	
+	public Vector3Int boardPos { get; set; }
 
 	int movementSpeed;
 	public bool hasMoved { get; set; } = false;
@@ -32,6 +39,7 @@ public class Unit : MonoBehaviour
 		SetMovementSpeed();
 		thisSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
 		SetSprite();
+		
 		
 	}
 	// Update is called once per frame
@@ -73,12 +81,12 @@ public class Unit : MonoBehaviour
 			case UnitType.Sword:
 				thisSpriteRenderer.sprite = playerSword;
 				break;
-			/*case UnitType.Archer:
+			case UnitType.Archer:
 				thisSpriteRenderer.sprite = playerArcher;
 				break;
 			case UnitType.Cavalry:
 				thisSpriteRenderer.sprite = playerCavalry;
-				break;*/
+				break;
 			default:
 				SetUnitErrorSprite();
 				break;
@@ -98,12 +106,12 @@ public class Unit : MonoBehaviour
 			case UnitType.Sword:
 				thisSpriteRenderer.sprite = enemySword;
 				break;
-			/*case UnitType.Archer:
+			case UnitType.Archer:
 				thisSpriteRenderer.sprite = enemyArcher;
 				break;
 			case UnitType.Cavalry:
 				thisSpriteRenderer.sprite = enemyCavalry;
-				break;*/
+				break;
 			default:
 				SetUnitErrorSprite();
 				break;
@@ -201,5 +209,21 @@ public class Unit : MonoBehaviour
 	{
 		if(count > 0)
 			count--;
+	}
+
+	public void SetMoved()
+	{
+		hasMoved = true;
+		thisSpriteRenderer.color = movedColor;
+	}
+	public void SetReady()
+	{
+		hasMoved = false;
+		thisSpriteRenderer.color = baseColor;
+	}
+	public void Die()
+	{
+		
+		Destroy(gameObject);
 	}
 }

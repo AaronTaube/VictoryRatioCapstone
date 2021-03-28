@@ -42,23 +42,51 @@ public class CombatManager : MonoBehaviour
 			if(defender.GetCount() <= 0)
 			{
 				//TODO death stuff
+				UnitDestroyed(defender);
 				return;//Exit function without retaliation.
 			}
 			//If alive, defender attacks
 			Attack(defender, attacker);
+			if (attacker.GetCount() <= 0)
+			{
+				//TODO death stuff
+				UnitDestroyed(attacker);
+				Debug.Log(unitsManager.GetAllPlayerUnits().Count);
+				return;//Exit function without retaliation.
+			}
 		}
 		else
 		{
 			//Defender swings first
 			Attack(defender, attacker);
-			if (defender.GetCount() <= 0)
+			if (attacker.GetCount() <= 0)
 			{
 				//TODO death stuff
+				UnitDestroyed(attacker);
 				return;
 			}
 			//if alive, attacker attacks
 			Attack(attacker, defender);
+			if (defender.GetCount() <= 0)
+			{
+				//TODO death stuff
+				UnitDestroyed(defender);
+				return;
+			}
 		}
+	}
+	void UnitDestroyed(Unit dead)
+	{
+		if (dead.alignment == Unit.Alignment.Player)
+		{
+			unitsManager.RemoveUnit(dead);
+		}
+
+		else
+		{
+			unitsManager.RemoveUnit(dead);
+		}
+		dead.Die();
 	}
 	/// <summary>
 	/// Deal damage to unit and play animations. May need to make this an IEnumerator or otherwise tie it to keyframes

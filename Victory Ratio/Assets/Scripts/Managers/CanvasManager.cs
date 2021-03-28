@@ -13,7 +13,7 @@ public class CanvasManager : MonoBehaviour
 	GameObject allUnits;
 	Transform playerUnits, enemyUnits, npcUnits;
 
-	Dictionary<GameObject, GameObject> countUnitPairs;
+	public Dictionary<GameObject, GameObject> countUnitPairs { get; private set; }
 
 	List<GameObject> countInstances = new List<GameObject>();
 	
@@ -85,6 +85,14 @@ public class CanvasManager : MonoBehaviour
 		countDisplay.GetComponentInChildren<TextMeshProUGUI>().SetText(count.ToString());
 		countUnitPairs.Add(unit.gameObject, countDisplay);
 		countInstances.Add(countDisplay);
+
+	}
+	public void RemoveUnitCountPair(GameObject unit)
+	{
+		GameObject count = countUnitPairs[unit];
+		countUnitPairs.Remove(unit);
+		countInstances.Remove(count);
+		Destroy(count);
 
 	}
 	/// <summary>
