@@ -1,13 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class CombatManager : MonoBehaviour
 {
+	[Header("Modifiers")]
+	[SerializeField]
 	double damageChance = .5;
+	[SerializeField]
+	double coverModifier = .5;
 
+	[Header("Management")]
 	[SerializeField]
 	UnitsManager unitsManager;
+	[SerializeField]
+	Tilemap forestTiles;
     /*// Start is called before the first frame update
     void Start()
     {
@@ -77,16 +85,13 @@ public class CombatManager : MonoBehaviour
 	}
 	void UnitDestroyed(Unit dead)
 	{
-		if (dead.alignment == Unit.Alignment.Player)
-		{
-			unitsManager.RemoveUnit(dead);
-		}
+		
+		unitsManager.RemoveUnit(dead);
+		
 
-		else
-		{
-			unitsManager.RemoveUnit(dead);
-		}
+		
 		dead.Die();
+		unitsManager.PopulateUnitDicts();
 	}
 	/// <summary>
 	/// Deal damage to unit and play animations. May need to make this an IEnumerator or otherwise tie it to keyframes
@@ -111,9 +116,16 @@ public class CombatManager : MonoBehaviour
 	private double CalculateStrength(Unit unit)
 	{
 		double result;
-
-		result = unit.GetCount();
-
+		if(forestTiles.HasTile(unit.BoardPos))
+		{
+			result = unit.GetCount() + (unit.GetCount()* coverModifier);
+		}
+		else
+		{
+			result = unit.GetCount();
+		}
+		Debug.Log("Unit pos = " + unit.BoardPos);
+		Debug.Log("Unit strength = " + result + " Unit Count = " + unit.GetCount());
 		return result;
 	}
 	/// <summary>

@@ -60,7 +60,7 @@ public class UnitsManager : MonoBehaviour
 	/// Finds and begins to track all units on the map in dictionaries. 
 	/// Will be modified as different unit control types are introduced. 
 	/// </summary>
-    void PopulateUnitDicts()
+    public void PopulateUnitDicts()
 	{
 		UpdatePlayerDict();
 		UpdateEnemyDict();
@@ -134,11 +134,11 @@ public class UnitsManager : MonoBehaviour
 		canvasManager.RemoveUnitCountPair(unit.transform.gameObject);
 		if (unit.alignment == Unit.Alignment.Player)
 		{
-			allPlayerUnits.Remove(unit.boardPos);
+			allPlayerUnits.Remove(unit.BoardPos);
 		}
 		if (unit.alignment == Unit.Alignment.Enemy)
 		{
-			allEnemyUnits.Remove(unit.boardPos);
+			allEnemyUnits.Remove(unit.BoardPos);
 		}
 	}
 	public bool ContainsUnit(Vector3Int pos)

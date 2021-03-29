@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 [ExecuteAlways]
 public class Unit : MonoBehaviour
 {
@@ -21,12 +22,23 @@ public class Unit : MonoBehaviour
 	SpriteRenderer thisSpriteRenderer;
 
 	UnitsManager unitManager;
-
+	Tilemap tilemap;
 	[Header("UI")]
 	[SerializeField] Color baseColor;
 	[SerializeField] Color movedColor;
-	
-	public Vector3Int boardPos { get; set; }
+	private Vector3Int boardPos;
+	public Vector3Int BoardPos
+	{
+		get
+		{
+			boardPos = tilemap.WorldToCell(transform.position);
+			return boardPos;
+		}// Vector3Int mapPosition = tilemap.WorldToCell(childPos); }
+		set
+		{
+			boardPos = tilemap.WorldToCell(transform.position);
+		}
+	}
 
 	int movementSpeed;
 	public bool hasMoved { get; set; } = false;
@@ -39,7 +51,8 @@ public class Unit : MonoBehaviour
 		SetMovementSpeed();
 		thisSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
 		SetSprite();
-		
+		GameObject go = GameObject.FindGameObjectWithTag("Field");
+		tilemap = go.GetComponent<Tilemap>();
 		
 	}
 	// Update is called once per frame

@@ -201,7 +201,7 @@ public class BoardManager : MonoBehaviour
 	/// </summary>
 	void EndOfMovementUpdates(Transform unit)
 	{
-		unitsManager.UpdatePlayerDict();
+		unitsManager.PopulateUnitDicts();
 		unitPos = new Vector3Int(Mathf.RoundToInt(unit.position.x), Mathf.RoundToInt(unit.position.y), 0);
 		stateManager.phase = GameStateManager.GameState.AttackSelection;
 		Debug.Log(stateManager.phase);
@@ -248,6 +248,7 @@ public class BoardManager : MonoBehaviour
 	/// <param name="startPos"></param>
 	public void CreateMovementTiles(Vector3Int startPos)
 	{
+		unitsManager.PopulateUnitDicts();
 		validMoves = movesManager.GetValidMoves(startPos, unitMoveRange, unitAttackRange);
 		validAttacks = movesManager.GetValidAttacks();
 		RemoveOccupiedTiles(validMoves);
