@@ -359,6 +359,12 @@ public class BoardManager : MonoBehaviour
 		ResetMovementTiles();
 		stateManager.phase = GameStateManager.GameState.MovementSelection;
 		SetUnitMoved();
+		if (!unitsManager.AnyPlayerMovesLeft())
+		{
+			unitsManager.ResetMoves();
+			//TODO: Change to enemy phase
+			stateManager.turn = GameStateManager.Turn.Enemy;
+		}
 	}
 	public void CreateAttackTiles(Vector3Int startPos)
 	{
