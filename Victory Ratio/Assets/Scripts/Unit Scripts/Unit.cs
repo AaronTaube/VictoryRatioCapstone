@@ -11,6 +11,10 @@ public class Unit : MonoBehaviour
     int count;
 	[SerializeField]
 	UnitType type;
+	private int defaultMovementSpeed = 3;
+	private int cavalryMovementSpeed = 5;
+	int archerRange2 = 2;
+	int defaultRange = 1;
 
 	public Alignment alignment { get; private set; }
 
@@ -39,16 +43,33 @@ public class Unit : MonoBehaviour
 			boardPos = tilemap.WorldToCell(transform.position);
 		}
 	}
-
-	int movementSpeed;
-	public bool hasMoved { get; set; } = false;
-
-    int defaultMovementSpeed = 3;
-    int cavalryMovementSpeed = 5;
+	private int movementSpeed;
+	public int MovementSpeed
+	{
+		get {
+			SetMovementSpeed();
+			return movementSpeed; }
+		//set { movementSpeed = value; }
+	}
+	public bool HasMoved { get; set; } = false;
+	private int attackRange;
+	public int AttackRange
+	{
+		get { return attackRange ; }
+		//set { attackRange = value; }
+	}
+	
 
 	private void Start()
 	{
+		//These default values are being set here for an odd bug.
+		//Private values for this script seem to be being forced to zero and I found no good explanation or fixes, so overriden here.
+		defaultMovementSpeed = 3;
+		cavalryMovementSpeed = 5;
+		archerRange2 = 2;
+		defaultRange = 1;
 		SetMovementSpeed();
+		SetAttackRange();
 		thisSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
 		SetSprite();
 		GameObject go = GameObject.FindGameObjectWithTag("Field");
@@ -58,11 +79,13 @@ public class Unit : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		
 		//Only run SetSprite to load the map or on editor updates. No need to constantly run it in play.
 		if (!Application.IsPlaying(gameObject))
 		{
 			SetSprite();
 			AdjustPos();
+			
 		}
 	}
 	void SetSprite()
@@ -203,6 +226,18 @@ public class Unit : MonoBehaviour
                 break;
         }
     }
+	void SetAttackRange()
+	{
+		switch (type)
+		{
+			case UnitType.Archer:
+				attackRange = archerRange2;
+				break;
+			default:
+				attackRange = defaultRange; ;
+				break;
+		}
+	}
 	public int GetCount()
 	{
 		return count;
@@ -226,12 +261,12 @@ public class Unit : MonoBehaviour
 
 	public void SetMoved()
 	{
-		hasMoved = true;
+		HasMoved = true;
 		thisSpriteRenderer.color = movedColor;
 	}
 	public void SetReady()
 	{
-		hasMoved = false;
+		HasMoved = false;
 		thisSpriteRenderer.color = baseColor;
 	}
 	public void Die()

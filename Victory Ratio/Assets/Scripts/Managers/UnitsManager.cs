@@ -157,7 +157,7 @@ public class UnitsManager : MonoBehaviour
 	{
 		foreach (var unit in allPlayerUnits)
 		{
-			if (!unit.Value.hasMoved)
+			if (!unit.Value.HasMoved)
 				return true;
 		}
 		return false;

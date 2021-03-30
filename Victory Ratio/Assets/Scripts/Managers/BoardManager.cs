@@ -237,7 +237,9 @@ public class BoardManager : MonoBehaviour
 		else
 		{
 			Unit unit = allUnits[position];
-			if (unit.hasMoved) return false;
+			unitAttackRange = unit.AttackRange;
+			unitMoveRange = unit.MovementSpeed;
+			if (unit.HasMoved) return false;
 			else return true;
 		}
 	}
