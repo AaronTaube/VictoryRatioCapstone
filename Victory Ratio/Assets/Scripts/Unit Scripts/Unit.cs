@@ -11,10 +11,10 @@ public class Unit : MonoBehaviour
     int count;
 	[SerializeField]
 	UnitType type;
-	private int defaultMovementSpeed = 3;
-	private int cavalryMovementSpeed = 5;
-	int archerRange2 = 2;
-	int defaultRange = 1;
+	private int defaultMovementSpeed;
+	private int cavalryMovementSpeed;
+	int archerRange2;
+	int defaultRange;
 
 	public Alignment alignment { get; private set; }
 
@@ -273,5 +273,9 @@ public class Unit : MonoBehaviour
 	{
 		
 		Destroy(gameObject);
+	}
+	public UnitType GetUnitType()
+	{
+		return type;
 	}
 }

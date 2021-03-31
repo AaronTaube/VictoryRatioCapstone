@@ -41,7 +41,19 @@ public class CombatManager : MonoBehaviour
 		double defenderStrenth = CalculateStrength(defender);
 		double odds = CalculateVictoryOdds(attackerStrength, defenderStrenth);
 		bool hasAdvantage = RollAdvantage(odds);
-		
+
+		if (RangeAdvantage(attacker, defender))
+		{
+			Attack(attacker, defender);
+			if (defender.GetCount() <= 0)
+			{
+				//TODO death stuff
+				UnitDestroyed(defender);
+				
+			}
+			return;//Exit function without retaliation.
+		}
+
 		if (hasAdvantage)
 		{
 			//Attacker swings first
@@ -156,5 +168,19 @@ public class CombatManager : MonoBehaviour
 		else
 			return false;
 
+	}
+	bool RangeAdvantage(Unit attacker, Unit defender)
+	{
+		if (defender.GetUnitType() == Unit.UnitType.Archer)
+			return false;
+		Vector3Int aPos = attacker.BoardPos;
+		Vector3Int dPos = defender.BoardPos;
+		int xDif = System.Math.Abs( aPos.x - dPos.x);
+		int yDif = System.Math.Abs(aPos.y - dPos.y);
+		int totalDif = xDif + yDif;
+		if (totalDif < 2)
+			return false;
+		else
+			return true;
 	}
 }
