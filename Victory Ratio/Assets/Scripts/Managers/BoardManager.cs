@@ -362,7 +362,7 @@ public class BoardManager : MonoBehaviour
 	
 	private void EndCombatPhase()
 	{
-		
+		ResetMovementTiles();
 		stateManager.phase = GameStateManager.GameState.MovementSelection;
 		SetUnitMoved();
 		if (!unitsManager.AnyPlayerMovesLeft())
