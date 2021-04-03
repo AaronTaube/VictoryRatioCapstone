@@ -278,4 +278,30 @@ public class Unit : MonoBehaviour
 	{
 		return type;
 	}
+	/// <summary>
+	/// Determine if this unit gets a strength boost against the opponent. 
+	/// To sum up: Sword beats Axe, Axe beats Spear, Spear beats Sword
+	///		Archers lose to all, but this does not matter when at range only archers can reach,
+	///			as this calculation will have no impact if the opponent can't swing back
+	///		Cavalry is even to all except archer, which it gets advantage against when in range.
+	///			This is because cavalry's strength is the extra movement tiles and lack of weaknesses.
+	/// </summary>
+	/// <param name="opponentType"></param>
+	/// <returns></returns>
+	public bool HasTypeAdvantage(UnitType opponentType)
+	{
+		if(type != UnitType.Archer && opponentType == UnitType.Archer)
+			return true;
+		if (type == UnitType.Cavalry)
+			return false;
+		if (type == UnitType.Archer)
+			return false;
+		if (type == UnitType.Axe && opponentType == UnitType.Spear)
+			return true;
+		if (type == UnitType.Spear && opponentType == UnitType.Sword)
+			return true;
+		if (type == UnitType.Sword && opponentType == UnitType.Axe)
+			return true;
+		return false;
+	}
 }

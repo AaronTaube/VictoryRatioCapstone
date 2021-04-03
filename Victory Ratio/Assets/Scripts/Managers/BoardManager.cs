@@ -207,11 +207,12 @@ public class BoardManager : MonoBehaviour
 		Debug.Log(stateManager.phase);
 		playerHasControl = true;
 	}
-	/// <summary>
-	/// Calls our Astar algorithm to get the movement path and converts it to a form
-	/// usable by our board manager for the purpose of moving the unit. 
-	/// </summary>
-	/// <returns></returns>
+	
+		/// <summary>
+		/// Calls our Astar algorithm to get the movement path and converts it to a form
+		/// usable by our board manager for the purpose of moving the unit. 
+		/// </summary>
+		/// <returns></returns>
 	Queue<Vector3Int> GetPath()
 	{
 		Stack<Vector3Int> tilemapPath = pathfinder.GetPath(unitPos, targetPos);
@@ -310,6 +311,11 @@ public class BoardManager : MonoBehaviour
 				moves.Remove(unit.Key);
 		}
 	}
+	void SetUnitMoved()
+	{
+
+		unitsManager.GetUnit(unitPos).SetMoved();
+	}
 	#endregion
 
 	#region Attack Code
@@ -331,7 +337,7 @@ public class BoardManager : MonoBehaviour
 				{
 					targetPos = clickPosition;
 					Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
-					AttackUnit();
+					StartCoroutine(AttackUnit());
 					EndCombatPhase();
 
 					return;
@@ -340,25 +346,23 @@ public class BoardManager : MonoBehaviour
 				{
 					EndCombatPhase();
 				}
-				/*if (SelectableUnitClicked(clickPosition))
-				{
-					Debug.Log("selectable");
-					unitPos = clickPosition;
-					CreateMovementTiles(clickPosition);
-				}*/
+				
 
 			}
 		}
 	}
-	private void AttackUnit()
+	private IEnumerator AttackUnit()
 	{
-		combatManager.Fight(unitPos, targetPos);
+		ResetMovementTiles();
+		yield return StartCoroutine(combatManager.Fight(unitPos, targetPos));
+		
 		//Debug.Log("ATTACK");
 
 	}
+	
 	private void EndCombatPhase()
 	{
-		ResetMovementTiles();
+		
 		stateManager.phase = GameStateManager.GameState.MovementSelection;
 		SetUnitMoved();
 		if (!unitsManager.AnyPlayerMovesLeft())
@@ -385,10 +389,8 @@ public class BoardManager : MonoBehaviour
 	{
 		movementBoard.SetTile(position, attackTile);
 	}
+	
+	
 	#endregion
-	void SetUnitMoved()
-	{
-
-		unitsManager.GetUnit(unitPos).SetMoved();
-	}
+	
 }

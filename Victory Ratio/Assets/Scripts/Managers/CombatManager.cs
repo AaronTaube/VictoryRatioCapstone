@@ -16,6 +16,8 @@ public class CombatManager : MonoBehaviour
 	UnitsManager unitsManager;
 	[SerializeField]
 	Tilemap forestTiles;
+	[SerializeField]
+	float swingSpeed = .25f;
     /*// Start is called before the first frame update
     void Start()
     {
@@ -33,65 +35,65 @@ public class CombatManager : MonoBehaviour
 	/// </summary>
 	/// <param name="attacker"></param>
 	/// <param name="defender"></param>
-	public void Fight(Vector3 attackerPos, Vector3 defenderPos)
+	public IEnumerator Fight(Vector3 attackerPos, Vector3 defenderPos)
 	{
 		Unit attacker = unitsManager.GetUnit(attackerPos);
 		Unit defender = unitsManager.GetUnit(defenderPos);
-		double attackerStrength = CalculateStrength(attacker);
-		double defenderStrenth = CalculateStrength(defender);
+		double attackerStrength = CalculateStrength(attacker, defender.GetUnitType());
+		double defenderStrenth = CalculateStrength(defender, attacker.GetUnitType());
 		double odds = CalculateVictoryOdds(attackerStrength, defenderStrenth);
 		bool hasAdvantage = RollAdvantage(odds);
 
 		if (RangeAdvantage(attacker, defender))
 		{
-			Attack(attacker, defender);
+			yield return StartCoroutine(Attack(attacker, defender));
 			if (defender.GetCount() <= 0)
 			{
 				//TODO death stuff
 				UnitDestroyed(defender);
 				
 			}
-			return;//Exit function without retaliation.
+			yield break;//Exit function without retaliation.
 		}
 
 		if (hasAdvantage)
 		{
 			//Attacker swings first
-			Attack(attacker, defender);
+			yield return StartCoroutine(Attack(attacker, defender));
 			//If unit destroyed, do death sequence instead
 			if(defender.GetCount() <= 0)
 			{
 				//TODO death stuff
 				UnitDestroyed(defender);
-				return;//Exit function without retaliation.
+				yield break;//Exit function without retaliation.
 			}
 			//If alive, defender attacks
-			Attack(defender, attacker);
+			yield return StartCoroutine(Attack(defender, attacker));
 			if (attacker.GetCount() <= 0)
 			{
 				//TODO death stuff
 				UnitDestroyed(attacker);
 				Debug.Log(unitsManager.GetAllPlayerUnits().Count);
-				return;//Exit function without retaliation.
+				yield break;//Exit function without retaliation.
 			}
 		}
 		else
 		{
 			//Defender swings first
-			Attack(defender, attacker);
+			yield return StartCoroutine(Attack(defender, attacker));
 			if (attacker.GetCount() <= 0)
 			{
 				//TODO death stuff
 				UnitDestroyed(attacker);
-				return;
+				yield break;
 			}
 			//if alive, attacker attacks
-			Attack(attacker, defender);
+			yield return StartCoroutine(Attack(attacker, defender));
 			if (defender.GetCount() <= 0)
 			{
 				//TODO death stuff
 				UnitDestroyed(defender);
-				return;
+				yield break;
 			}
 		}
 	}
@@ -111,13 +113,31 @@ public class CombatManager : MonoBehaviour
 	/// </summary>
 	/// <param name="damageDealer"></param>
 	/// <param name="damageTaker"></param>
-	private void Attack(Unit damageDealer, Unit damageTaker)
+	private IEnumerator Attack(Unit damageDealer, Unit damageTaker)
 	{
+		float elapsedTime = 0.0f;
+		Vector3 goalPosistion = new Vector3(((damageTaker.transform.position.x - damageDealer.transform.position.x) / 2) + damageDealer.transform.position.x,
+												((damageTaker.transform.position.y - damageDealer.transform.position.y) / 2) + damageDealer.transform.position.y,
+												damageDealer.transform.position.z);// damageTaker.transform.position;
+		Vector3 startPos = damageDealer.transform.position;
+		while (elapsedTime < swingSpeed)
+		{
+			damageDealer.transform.position = Vector3.Lerp(startPos, goalPosistion, (elapsedTime / swingSpeed));
+			elapsedTime += Time.deltaTime;
+			yield return new WaitForEndOfFrame();
+		}
 		System.Random rand = new System.Random();
 		for (int i = 0; i < damageDealer.GetCount(); i++)
 		{
 			if (rand.NextDouble() < damageChance)
 				damageTaker.TakeDamage();
+		}
+		elapsedTime = 0.0f;
+		while (elapsedTime < swingSpeed)
+		{
+			damageDealer.transform.position = Vector3.Lerp(goalPosistion, startPos, (elapsedTime / swingSpeed));
+			elapsedTime += Time.deltaTime;
+			yield return new WaitForEndOfFrame();
 		}
 	}
 	/// <summary>
@@ -125,9 +145,14 @@ public class CombatManager : MonoBehaviour
 	/// </summary>
 	/// <param name="unitCount"></param>
 	/// <returns></returns>
-	private double CalculateStrength(Unit unit)
+	private double CalculateStrength(Unit unit, Unit.UnitType opponentType)
 	{
 		double result;
+		double typeAdvantage = 0;
+		if(unit.HasTypeAdvantage(opponentType))
+		{
+			typeAdvantage = unit.GetCount() * .5;
+		}
 		if(forestTiles.HasTile(unit.BoardPos))
 		{
 			result = unit.GetCount() + (unit.GetCount()* coverModifier);
@@ -138,7 +163,7 @@ public class CombatManager : MonoBehaviour
 		}
 		Debug.Log("Unit pos = " + unit.BoardPos);
 		Debug.Log("Unit strength = " + result + " Unit Count = " + unit.GetCount());
-		return result;
+		return result + typeAdvantage;
 	}
 	/// <summary>
 	/// Calculates chance of "Victory", which, in this context, 

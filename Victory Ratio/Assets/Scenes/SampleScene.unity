@@ -240,7 +240,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &128646734
 Canvas:
   m_ObjectHideFlags: 0
@@ -1439,6 +1439,7 @@ MonoBehaviour:
   coverModifier: 0.5
   unitsManager: {fileID: 155222890}
   forestTiles: {fileID: 1981679486}
+  swingSpeed: 0.25
 --- !u!1 &999803077
 GameObject:
   m_ObjectHideFlags: 0
