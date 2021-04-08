@@ -6,6 +6,7 @@ public class GameStateManager : MonoBehaviour
 {
 	public GameState phase { get; set; }
 	public Turn turn { get; set; }
+	public AIState ai { get; set; }
 	/// <summary>
 	/// Which state of gameplay the game is in.
 	/// </summary>
@@ -25,6 +26,15 @@ public class GameStateManager : MonoBehaviour
 		Player,
 		Enemy,
 		NPC
+	}
+
+	public enum AIState
+	{
+		Waiting,
+		Moving,
+		SwitchingToAttack,
+		Attacking,
+		Switching
 	}
 	// Start is called before the first frame update
 	void Start()

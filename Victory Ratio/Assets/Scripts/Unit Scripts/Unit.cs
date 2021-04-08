@@ -35,7 +35,8 @@ public class Unit : MonoBehaviour
 	{
 		get
 		{
-			boardPos = tilemap.WorldToCell(transform.position);
+			Vector3Int intPos = new Vector3Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
+			boardPos = tilemap.WorldToCell(intPos); 
 			return boardPos;
 		}// Vector3Int mapPosition = tilemap.WorldToCell(childPos); }
 		set

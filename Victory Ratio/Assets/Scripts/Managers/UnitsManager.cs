@@ -134,11 +134,11 @@ public class UnitsManager : MonoBehaviour
 		canvasManager.RemoveUnitCountPair(unit.transform.gameObject);
 		if (unit.alignment == Unit.Alignment.Player)
 		{
-			allPlayerUnits.Remove(unit.BoardPos);
+			//allPlayerUnits.Remove(unit.BoardPos);
 		}
 		if (unit.alignment == Unit.Alignment.Enemy)
 		{
-			allEnemyUnits.Remove(unit.BoardPos);
+			//allEnemyUnits.Remove(unit.BoardPos);
 		}
 	}
 	public bool ContainsUnit(Vector3Int pos)

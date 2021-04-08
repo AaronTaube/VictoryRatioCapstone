@@ -225,6 +225,7 @@ public class ValidMoves : MonoBehaviour
 	}
 	/// <summary>
 	/// Get all attack tiles within range of unit that has been moved.
+	/// TODO: Change this to a more traditional system. This does not work for gaps on the map
 	/// </summary>
 	/// <param name="startPos"></param>
 	/// <param name="attackRange"></param>

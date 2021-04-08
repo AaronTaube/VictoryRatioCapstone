@@ -46,7 +46,7 @@ public class CombatManager : MonoBehaviour
 
 		if (RangeAdvantage(attacker, defender))
 		{
-			yield return StartCoroutine(Attack(attacker, defender));
+			yield return Attack(attacker, defender);
 			if (defender.GetCount() <= 0)
 			{
 				//TODO death stuff
@@ -59,7 +59,7 @@ public class CombatManager : MonoBehaviour
 		if (hasAdvantage)
 		{
 			//Attacker swings first
-			yield return StartCoroutine(Attack(attacker, defender));
+			yield return Attack(attacker, defender);
 			//If unit destroyed, do death sequence instead
 			if(defender.GetCount() <= 0)
 			{
@@ -68,7 +68,7 @@ public class CombatManager : MonoBehaviour
 				yield break;//Exit function without retaliation.
 			}
 			//If alive, defender attacks
-			yield return StartCoroutine(Attack(defender, attacker));
+			yield return Attack(defender, attacker);
 			if (attacker.GetCount() <= 0)
 			{
 				//TODO death stuff
@@ -80,7 +80,7 @@ public class CombatManager : MonoBehaviour
 		else
 		{
 			//Defender swings first
-			yield return StartCoroutine(Attack(defender, attacker));
+			yield return Attack(defender, attacker);
 			if (attacker.GetCount() <= 0)
 			{
 				//TODO death stuff
@@ -88,7 +88,7 @@ public class CombatManager : MonoBehaviour
 				yield break;
 			}
 			//if alive, attacker attacks
-			yield return StartCoroutine(Attack(attacker, defender));
+			yield return Attack(attacker, defender);
 			if (defender.GetCount() <= 0)
 			{
 				//TODO death stuff
@@ -118,7 +118,7 @@ public class CombatManager : MonoBehaviour
 		float elapsedTime = 0.0f;
 		Vector3 goalPosistion = new Vector3(((damageTaker.transform.position.x - damageDealer.transform.position.x) / 2) + damageDealer.transform.position.x,
 												((damageTaker.transform.position.y - damageDealer.transform.position.y) / 2) + damageDealer.transform.position.y,
-												damageDealer.transform.position.z);// damageTaker.transform.position;
+												damageDealer.transform.position.z);
 		Vector3 startPos = damageDealer.transform.position;
 		while (elapsedTime < swingSpeed)
 		{
@@ -161,7 +161,7 @@ public class CombatManager : MonoBehaviour
 		{
 			result = unit.GetCount();
 		}
-		Debug.Log("Unit pos = " + unit.BoardPos);
+		//Debug.Log("Unit pos = " + unit.BoardPos);
 		Debug.Log("Unit strength = " + result + " Unit Count = " + unit.GetCount());
 		return result + typeAdvantage;
 	}

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -27,6 +28,9 @@ public class BoardManager : MonoBehaviour
 	[SerializeField]
 	private Grid grid;
 
+	[SerializeField]
+	private Greedy greedyAI;
+
 	[Header("Raycast Variables")]
 	[SerializeField]
 	private Camera camera;
@@ -45,7 +49,7 @@ public class BoardManager : MonoBehaviour
 	int unitMoveRange = 3;
 	int unitAttackRange = 1;
 
-	private bool playerHasControl = true;
+	public bool playerHasControl = true;
 	private GameStateManager stateManager;
 
 	[Header("Game Config")]
@@ -72,7 +76,7 @@ public class BoardManager : MonoBehaviour
 				PlayerTurnLogic();
 				break;
 			case GameStateManager.Turn.Enemy:
-				EnemyTurnLogic();
+				//EnemyTurnLogic();
 				break;
 			case GameStateManager.Turn.NPC:
 				NPCTurnLogic();
@@ -105,14 +109,13 @@ public class BoardManager : MonoBehaviour
 					break;
 			}
 		}
-		
 	}
 	/// <summary>
 	/// Will likely outsource to another class to handle AI
 	/// </summary>
 	void EnemyTurnLogic()
 	{
-
+		greedyAI.InitiateTurn();
 	}
 	/// <summary>
 	/// Will likely outsource to another class to handle AI
@@ -160,6 +163,9 @@ public class BoardManager : MonoBehaviour
 	private void MoveUnit()
 	{
 		Transform selectedUnit = unitsManager.GetPlayerUnit(unitPos).transform;
+		playerHasControl = false;
+		ParticleSystem dustEmitter = selectedUnit.GetComponentInChildren<ParticleSystem>();
+		dustEmitter.Play();
 		StartCoroutine(MoveBetweenNodes(selectedUnit, moveSpeed));
 		ResetMovementTiles();
 	}
@@ -173,16 +179,15 @@ public class BoardManager : MonoBehaviour
 	/// <returns></returns>
 	private IEnumerator MoveBetweenNodes(Transform unit, float time)
 	{
-		playerHasControl = false;
-		ParticleSystem dustEmitter = unit.GetComponentInChildren<ParticleSystem>();
-		dustEmitter.Play();
+		
+		
 		Queue<Vector3Int> path = GetPath();
 		while(path.Count > 0)
 		{
 			float elapsedTime = 0;
 			Vector3 nextPos = path.Dequeue();
 			Vector3 startPos = unit.position;
-			Debug.Log("Next pos = " + nextPos);
+			//Debug.Log("Next pos = " + nextPos);
 			while (elapsedTime < time)
 			{
 				unit.position = Vector3.Lerp(startPos, nextPos, (elapsedTime / time));
@@ -191,11 +196,11 @@ public class BoardManager : MonoBehaviour
 			}
 			
 		}
+		ParticleSystem dustEmitter = unit.GetComponentInChildren<ParticleSystem>();
 		dustEmitter.Stop();
-		EndOfMovementUpdates(unit);
-		
-
+		EndOfMovementUpdates(unit);	
 	}
+
 	/// <summary>
 	/// Update unit positions and move to attack phase
 	/// </summary>
@@ -204,15 +209,115 @@ public class BoardManager : MonoBehaviour
 		unitsManager.PopulateUnitDicts();
 		unitPos = new Vector3Int(Mathf.RoundToInt(unit.position.x), Mathf.RoundToInt(unit.position.y), 0);
 		stateManager.phase = GameStateManager.GameState.AttackSelection;
-		Debug.Log(stateManager.phase);
+		//Debug.Log(stateManager.phase);
 		playerHasControl = true;
 	}
-	
-		/// <summary>
-		/// Calls our Astar algorithm to get the movement path and converts it to a form
-		/// usable by our board manager for the purpose of moving the unit. 
-		/// </summary>
-		/// <returns></returns>
+	public void MoveEnemyUnit(Unit enemy, Unit target)
+	{
+		Transform selectedUnit = enemy.transform;
+		unitPos = enemy.BoardPos;
+		targetPos = target.BoardPos;//Vector3Int.FloorToInt(target.transform.position);
+		StartCoroutine(EnemyMoveBetweenNodes(selectedUnit, moveSpeed));
+	}
+	/// <summary>
+	/// Coroutine to run through Astar path one node at a time
+	/// without halting the game. 
+	/// Updates player dictionary at completion.
+	/// </summary>
+	/// <param name="unit"></param>
+	/// <param name="time"></param>
+	/// <returns></returns>
+	private IEnumerator EnemyMoveBetweenNodes(Transform unit, float time)
+	{
+		//stateManager.ai = GameStateManager.AIState.Moving;
+		ParticleSystem dustEmitter = unit.GetComponentInChildren<ParticleSystem>();
+		dustEmitter.Play();
+		Queue<Vector3Int> path = GetEnemyPath(unit);
+		Debug.Log("Enemy path size " + path.Count);
+		while (path.Count > 0)
+		{
+			float elapsedTime = 0;
+			Vector3 nextPos = path.Dequeue();
+			Vector3 startPos = unit.position;
+			//Debug.Log("Next pos = " + nextPos);
+			while (elapsedTime < time)
+			{
+				unit.position = Vector3.Lerp(startPos, nextPos, (elapsedTime / time));
+				elapsedTime += Time.deltaTime;
+				yield return new WaitForEndOfFrame();
+			}
+
+		}
+		dustEmitter.Stop();
+		stateManager.ai = GameStateManager.AIState.SwitchingToAttack;
+		unitsManager.PopulateUnitDicts();
+
+	}
+	Queue<Vector3Int> GetEnemyPath(Transform unit)
+	{
+		Stack<Vector3Int> tilemapPath = pathfinder.GetPath(unitPos, targetPos);
+		Stack<Vector3Int> trimmedTilemapPath = TrimRange(tilemapPath, unit.GetComponent<Unit>().AttackRange);
+		Stack<Vector3Int> maxPath = new Stack<Vector3Int>();
+		Stack<Vector3Int> tempMaxPath = new Stack<Vector3Int>();
+		Queue<Vector3Int> moveablePath = new Queue<Vector3Int>();
+
+		for(int i = 0; i < unit.GetComponent<Unit>().MovementSpeed && trimmedTilemapPath.Count > 0; i++)
+		{
+			Vector3Int worldPos = Vector3Int.RoundToInt(movementBoard.CellToWorld(trimmedTilemapPath.Pop()));
+			maxPath.Push(worldPos);
+		}
+		Debug.Log("Max path length = " + maxPath.Count);
+		bool furthestPointFound = false;
+		while(maxPath.Count != 0)
+		{
+			if (furthestPointFound == false)
+			{
+				if (CheckIfOccupied(movementBoard.WorldToCell(maxPath.Peek())) == false)
+				{
+					furthestPointFound = true;
+					tempMaxPath.Push(maxPath.Pop());
+				}
+				else
+				{
+					maxPath.Pop();
+				}
+			}
+			else
+			{
+				tempMaxPath.Push(maxPath.Pop());
+			}
+			
+		}
+		while(tempMaxPath.Count > 0)
+		{
+			moveablePath.Enqueue(tempMaxPath.Pop());
+		}
+		return moveablePath;
+	}
+	Stack<Vector3Int> TrimRange(Stack<Vector3Int> path, int range)
+	{
+		Stack<Vector3Int> reversedTrimmedStack = new Stack<Vector3Int>();
+		Stack<Vector3Int> trimmedStack = new Stack<Vector3Int>();
+		while (path.Count > range)
+		{
+			reversedTrimmedStack.Push(path.Pop());
+		}
+
+		while(reversedTrimmedStack.Count > 0)
+		{
+			trimmedStack.Push(reversedTrimmedStack.Pop());
+		}
+		return trimmedStack;
+	}
+	private bool CheckIfOccupied(Vector3Int pos)
+	{
+		return unitsManager.ContainsUnit(pos);
+	}
+	/// <summary>
+	/// Calls our Astar algorithm to get the movement path and converts it to a form
+	/// usable by our board manager for the purpose of moving the unit. 
+	/// </summary>
+	/// <returns></returns>
 	Queue<Vector3Int> GetPath()
 	{
 		Stack<Vector3Int> tilemapPath = pathfinder.GetPath(unitPos, targetPos);
@@ -338,7 +443,7 @@ public class BoardManager : MonoBehaviour
 					targetPos = clickPosition;
 					Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
 					StartCoroutine(AttackUnit());
-					EndCombatPhase();
+					//EndCombatPhase();
 
 					return;
 				}
@@ -353,9 +458,10 @@ public class BoardManager : MonoBehaviour
 	}
 	private IEnumerator AttackUnit()
 	{
+		playerHasControl = false;
 		ResetMovementTiles();
-		yield return StartCoroutine(combatManager.Fight(unitPos, targetPos));
-		
+		yield return combatManager.Fight(unitPos, targetPos);//StartCoroutine(combatManager.Fight(unitPos, targetPos));
+		EndCombatPhase();
 		//Debug.Log("ATTACK");
 
 	}
@@ -367,9 +473,15 @@ public class BoardManager : MonoBehaviour
 		SetUnitMoved();
 		if (!unitsManager.AnyPlayerMovesLeft())
 		{
+			unitsManager.PopulateUnitDicts();
 			unitsManager.ResetMoves();
+
 			//TODO: Change to enemy phase
 			stateManager.turn = GameStateManager.Turn.Enemy;
+		}
+		else
+		{
+			playerHasControl = true;
 		}
 	}
 	public void CreateAttackTiles(Vector3Int startPos)
