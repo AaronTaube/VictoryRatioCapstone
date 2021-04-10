@@ -441,7 +441,7 @@ public class BoardManager : MonoBehaviour
 					unitsManager.GetAllEnemyUnits().ContainsKey(clickPosition))
 				{
 					targetPos = clickPosition;
-					Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
+					
 					StartCoroutine(AttackUnit());
 					//EndCombatPhase();
 
