@@ -15,6 +15,7 @@ public class GameStateManager : MonoBehaviour
 		SceneOpen,
 		MovementSelection,
 		AttackSelection,
+		MathIncentive,
 		Combat,
 		TurnSwitch
 	}

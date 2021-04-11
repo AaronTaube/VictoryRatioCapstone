@@ -274,8 +274,15 @@ public class Unit : MonoBehaviour
 	}
 	public void Die()
 	{
+		try
+		{
+			Destroy(gameObject);
+		}
+		catch(Exception e)
+		{
+			return;
+		}
 		
-		Destroy(gameObject);
 	}
 	public UnitType GetUnitType()
 	{

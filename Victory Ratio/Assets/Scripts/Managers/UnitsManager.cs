@@ -126,11 +126,14 @@ public class UnitsManager : MonoBehaviour
 			return allPlayerUnits[cellPos];
 		else if (allEnemyUnits.ContainsKey(cellPos))
 			return allEnemyUnits[cellPos];
-		else
+		else if (allNPCUnits.ContainsKey(cellPos))
 			return allNPCUnits[cellPos];
+		else return null;
 	}
 	public void RemoveUnit(Unit unit)
 	{
+		if (unit == null)
+			return;
 		canvasManager.RemoveUnitCountPair(unit.transform.gameObject);
 		if (unit.alignment == Unit.Alignment.Player)
 		{

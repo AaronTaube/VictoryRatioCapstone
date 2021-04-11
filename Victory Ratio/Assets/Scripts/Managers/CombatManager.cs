@@ -18,10 +18,15 @@ public class CombatManager : MonoBehaviour
 	Tilemap forestTiles;
 	[SerializeField]
 	float swingSpeed = .25f;
-    /*// Start is called before the first frame update
+
+	[Header("Sound")]
+	[SerializeField]
+	AudioClip[] attackSounds;
+	AudioSource audioSource;
+    // Start is called before the first frame update
     void Start()
     {
-        
+		audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -29,16 +34,18 @@ public class CombatManager : MonoBehaviour
     {
         
     }
-	*/
+	
 	/// <summary>
 	/// Initiates combat sequence
 	/// </summary>
 	/// <param name="attacker"></param>
 	/// <param name="defender"></param>
-	public IEnumerator Fight(Vector3 attackerPos, Vector3 defenderPos)
+	public IEnumerator Fight(Vector3Int attackerPos, Vector3Int defenderPos)
 	{
 		Unit attacker = unitsManager.GetUnit(attackerPos);
 		Unit defender = unitsManager.GetUnit(defenderPos);
+		if (defender == null)
+			yield break;
 		double attackerStrength = CalculateStrength(attacker, defender.GetUnitType());
 		double defenderStrenth = CalculateStrength(defender, attacker.GetUnitType());
 		double odds = CalculateVictoryOdds(attackerStrength, defenderStrenth);
@@ -97,6 +104,20 @@ public class CombatManager : MonoBehaviour
 			}
 		}
 	}
+	public IEnumerator FreeSwing(Vector3Int attackerPos, Vector3Int defenderPos)
+	{
+		Unit attacker = unitsManager.GetUnit(attackerPos);
+		Unit defender = unitsManager.GetUnit(defenderPos);
+		if (defender == null)
+			yield break;
+		yield return Attack(attacker, defender);
+		if (defender.GetCount() <= 0)
+		{
+			//TODO death stuff
+			UnitDestroyed(defender);
+			
+		}
+	}
 	void UnitDestroyed(Unit dead)
 	{
 		
@@ -120,6 +141,7 @@ public class CombatManager : MonoBehaviour
 												((damageTaker.transform.position.y - damageDealer.transform.position.y) / 2) + damageDealer.transform.position.y,
 												damageDealer.transform.position.z);
 		Vector3 startPos = damageDealer.transform.position;
+		PlayAttackSound();
 		while (elapsedTime < swingSpeed)
 		{
 			damageDealer.transform.position = Vector3.Lerp(startPos, goalPosistion, (elapsedTime / swingSpeed));
@@ -176,7 +198,7 @@ public class CombatManager : MonoBehaviour
 	{
 		double victoryOdds = 0;
 		double totalStrength = attackStrength + defenseStrength;
-		victoryOdds = attackStrength / defenseStrength;
+		victoryOdds = attackStrength / totalStrength;
 		return victoryOdds;
 	}
 	/// <summary>
@@ -194,7 +216,7 @@ public class CombatManager : MonoBehaviour
 			return false;
 
 	}
-	bool RangeAdvantage(Unit attacker, Unit defender)
+	public bool RangeAdvantage(Unit attacker, Unit defender)
 	{
 		if (defender.GetUnitType() == Unit.UnitType.Archer)
 			return false;
@@ -207,5 +229,30 @@ public class CombatManager : MonoBehaviour
 			return false;
 		else
 			return true;
+	}
+	public double GetOdds(Vector3Int attackerPos, Vector3Int defenderPos)
+	{
+		Unit attacker = unitsManager.GetUnit(attackerPos);
+		Unit defender = unitsManager.GetUnit(defenderPos);
+		double attackerStrength = CalculateStrength(attacker, defender.GetUnitType());
+		double defenderStrenth = CalculateStrength(defender, attacker.GetUnitType());
+		return CalculateVictoryOdds(attackerStrength, defenderStrenth);
+	}
+	void PlayAttackSound()
+	{
+		System.Random rand = new System.Random();
+		int count = attackSounds.Length - 1;
+		audioSource.clip = attackSounds[rand.Next(count)];
+		audioSource.PlayOneShot(audioSource.clip);
+		/*for (int i = 0; i < 3; i++)
+		{
+			audioSource.clip = attackSounds[rand.Next(count)];
+			audioSource.PlayOneShot(audioSource.clip);
+			while (audioSource.isPlaying)
+			{
+				yield return null;
+			}
+		}*/
+
 	}
 }

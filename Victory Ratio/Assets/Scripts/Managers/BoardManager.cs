@@ -31,6 +31,9 @@ public class BoardManager : MonoBehaviour
 	[SerializeField]
 	private Greedy greedyAI;
 
+	[SerializeField]
+	GameObject mathIncentive;
+
 	[Header("Raycast Variables")]
 	[SerializeField]
 	private Camera camera;
@@ -440,9 +443,19 @@ public class BoardManager : MonoBehaviour
 				if (validAttacks.ContainsKey(clickPosition) && 
 					unitsManager.GetAllEnemyUnits().ContainsKey(clickPosition))
 				{
+
 					targetPos = clickPosition;
+					if(combatManager.RangeAdvantage(unitsManager.GetPlayerUnit(unitPos), unitsManager.GetUnit(targetPos)))
+					{
+						StartCoroutine(AttackUnit());
+					}
+					else
+					{
+						ResetMovementTiles();
+						stateManager.phase = GameStateManager.GameState.MathIncentive;
+						mathIncentive.SetActive(true);
+					}
 					
-					StartCoroutine(AttackUnit());
 					//EndCombatPhase();
 
 					return;
@@ -455,6 +468,10 @@ public class BoardManager : MonoBehaviour
 
 			}
 		}
+	}
+	public IEnumerator AttackCoroutine()
+	{
+		yield return AttackUnit();
 	}
 	private IEnumerator AttackUnit()
 	{
@@ -504,5 +521,13 @@ public class BoardManager : MonoBehaviour
 	
 	
 	#endregion
-	
+	public Vector3Int GetPlayerUnitPos()
+	{
+		return unitPos;
+	}
+	public Vector3Int GetPlayerTargetPos()
+	{
+		return targetPos;
+	}
+
 }
