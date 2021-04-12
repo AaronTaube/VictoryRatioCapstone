@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MathIncentive : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class MathIncentive : MonoBehaviour
 	TMP_InputField leftSide, rightSide, solution;
 	[SerializeField]
 	GameObject mathCanvas;
+	[SerializeField]
+	Button submitButton;
 	Vector3Int playerPos, targetPos;
 	[SerializeField]
 	float answerDisplayTime = 1.5f;
@@ -40,6 +43,7 @@ public class MathIncentive : MonoBehaviour
 	}
 	public void AnswerSubmitted()
 	{
+		submitButton.interactable = false;
 		//Check if the player has the correct answer
 		if (double.TryParse(leftSide.text, out double leftNum) && double.TryParse(rightSide.text, out double rightNum))
 		{
@@ -58,6 +62,7 @@ public class MathIncentive : MonoBehaviour
 			StartCoroutine(NormalAttack());
 
 		}
+		
 	}
 	void PresentPercentage(double left, double right)
 	{
@@ -119,6 +124,7 @@ public class MathIncentive : MonoBehaviour
 	{
 		ResetMath();
 		SetTextYellow();
+		submitButton.interactable = true;
 		mathCanvas.SetActive(false);
 	}
 	void ResetMath()

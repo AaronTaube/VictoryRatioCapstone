@@ -65,8 +65,11 @@ public class UnitsManager : MonoBehaviour
 		UpdatePlayerDict();
 		UpdateEnemyDict();
 		UpdateNPCDict();
-        
-    }
+        /*if(allPlayerUnits.Count == 0)
+			FindObjectOfType<GameStateManager>().phase = GameStateManager.GameState.Lose;
+		if (allEnemyUnits.Count == 0)
+			FindObjectOfType<GameStateManager>().phase = GameStateManager.GameState.Win;*/
+	}
 	/// <summary>
 	/// Make sure all units under player control are tracked. 
 	/// 

@@ -486,6 +486,8 @@ public class BoardManager : MonoBehaviour
 	private void EndCombatPhase()
 	{
 		ResetMovementTiles();
+		//CheckForVictoryOrDefeat();
+			
 		stateManager.phase = GameStateManager.GameState.MovementSelection;
 		SetUnitMoved();
 		if (!unitsManager.AnyPlayerMovesLeft())
@@ -530,4 +532,17 @@ public class BoardManager : MonoBehaviour
 		return targetPos;
 	}
 
+	public void CheckForVictoryOrDefeat()
+	{
+		unitsManager.PopulateUnitDicts();
+		if (unitsManager.GetAllPlayerUnits().Count == 0)
+		{
+			stateManager.progress = GameStateManager.MatchState.Lose;
+		}
+
+		if (unitsManager.GetAllEnemyUnits().Count == 0)
+		{
+			stateManager.progress = GameStateManager.MatchState.Win;
+		}
+	}
 }

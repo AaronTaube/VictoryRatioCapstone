@@ -46,12 +46,13 @@ public class Greedy : MonoBehaviour
 		//Get the next unit to be moved and initiates movement
 		if (stateManager.ai == GameStateManager.AIState.Switching && units.Count > 0)
 		{
+			unitsManager.PopulateUnitDicts();
 			current = units.Dequeue();
 			if (current == null)
 				return;
 			stateManager.ai = GameStateManager.AIState.Moving;
 			
-			MovementAction();
+			StartCoroutine(MovementAction());
 		}
 		if (stateManager.ai == GameStateManager.AIState.SwitchingToAttack)
 		{
@@ -104,8 +105,14 @@ public class Greedy : MonoBehaviour
 		}
 	}
 	
-	void MovementAction()
+	IEnumerator MovementAction()
 	{
+		float elapsedTime = 0f;
+		while (elapsedTime < .25f)
+		{
+			elapsedTime += Time.deltaTime;
+			yield return new WaitForEndOfFrame();
+		}
 		target = FindTarget(current);
 		boardManager.MoveEnemyUnit(current, target);
 		
@@ -150,6 +157,8 @@ public class Greedy : MonoBehaviour
 			yield return combatManager.Fight(current.BoardPos, target.BoardPos);
 			
 		}
+
 		stateManager.ai = GameStateManager.AIState.Switching;
+		//boardManager.CheckForVictoryOrDefeat();
 	}
 }

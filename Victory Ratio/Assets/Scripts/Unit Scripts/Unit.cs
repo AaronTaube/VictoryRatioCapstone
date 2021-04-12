@@ -35,11 +35,19 @@ public class Unit : MonoBehaviour
 	{
 		get
 		{
-			if (transform == null)
-				return boardPos;//Returns what it was previously set to as a get around to a current race condition.
-			Vector3Int intPos = new Vector3Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
-			boardPos = tilemap.WorldToCell(intPos); 
-			return boardPos;
+			try
+			{
+				if (transform == null)
+					return boardPos;//Returns what it was previously set to as a get around to a current race condition.
+				Vector3Int intPos = new Vector3Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y), 0);
+				boardPos = tilemap.WorldToCell(intPos);
+				return boardPos;
+			}
+			catch
+			{
+				return boardPos;
+			}
+			
 		}// Vector3Int mapPosition = tilemap.WorldToCell(childPos); }
 		set
 		{
