@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
 {
-	private SceneManager sceneManager;
+	private SceneLoader sceneManager;
 	private BoardManager boardManager;
 	//private UnitsManager unitsManager;
 	[SerializeField]
@@ -57,7 +57,7 @@ public class GameStateManager : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-		sceneManager = FindObjectOfType<SceneManager>();
+		sceneManager = FindObjectOfType<SceneLoader>();
 		boardManager = FindObjectOfType<BoardManager>();
 		//unitsManager = FindObjectOfType<UnitsManager>();
 		progress = MatchState.InProgress;
