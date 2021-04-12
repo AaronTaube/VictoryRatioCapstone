@@ -1379,7 +1379,7 @@ PrefabInstance:
     - target: {fileID: 521379807418395798, guid: b073291d367a9c641bcad936a040e8d8,
         type: 3}
       propertyPath: count
-      value: 15
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 521379807418395799, guid: b073291d367a9c641bcad936a040e8d8,
         type: 3}
@@ -1499,7 +1499,7 @@ PrefabInstance:
     - target: {fileID: 521379807418395798, guid: b073291d367a9c641bcad936a040e8d8,
         type: 3}
       propertyPath: count
-      value: 4
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 521379807418395799, guid: b073291d367a9c641bcad936a040e8d8,
         type: 3}
@@ -2385,7 +2385,7 @@ PrefabInstance:
     - target: {fileID: 521379807418395798, guid: b073291d367a9c641bcad936a040e8d8,
         type: 3}
       propertyPath: count
-      value: 5
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 521379807418395799, guid: b073291d367a9c641bcad936a040e8d8,
         type: 3}
@@ -5148,6 +5148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c6754e2333c7646a23acb8c6aa3c14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  winScreen: {fileID: 2056612851}
+  loseScreen: {fileID: 1662399000}
+  endMenuDelay: 1.5
 --- !u!4 &1378177061 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 521379807418395799, guid: b073291d367a9c641bcad936a040e8d8,
@@ -6010,7 +6013,7 @@ PrefabInstance:
     - target: {fileID: 521379807418395798, guid: b073291d367a9c641bcad936a040e8d8,
         type: 3}
       propertyPath: count
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 521379807418395799, guid: b073291d367a9c641bcad936a040e8d8,
         type: 3}
@@ -11066,6 +11069,7 @@ MonoBehaviour:
   rightSide: {fileID: 2049720625}
   solution: {fileID: 1739229378}
   mathCanvas: {fileID: 969472884}
+  submitButton: {fileID: 2007471785}
   answerDisplayTime: 1
   postMathDelay: 0.5
   green: {r: 0, g: 1, b: 0, a: 1}

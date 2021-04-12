@@ -142,7 +142,7 @@ public class BoardManager : MonoBehaviour
 
 				Vector3 mouseWorldPos = camera.ScreenToWorldPoint(Input.mousePosition);
 				Vector3Int clickPosition = movementBoard.WorldToCell(mouseWorldPos);
-				if (validMoves.ContainsKey(clickPosition))
+				if (validMoves.ContainsKey(clickPosition) || (clickPosition == unitPos && unitsManager.GetUnit(unitPos).HasMoved == false))
 				{
 					targetPos = clickPosition;
 					Debug.Log("Unit at  " + unitPos + " target at " + targetPos);
@@ -150,6 +150,12 @@ public class BoardManager : MonoBehaviour
 					MoveUnit();
 					return;
 				}
+				/*if(SelectableUnitClicked(clickPosition) && clickPosition == unitPos)
+				{
+					ResetMovementTiles();
+					EndOfMovementUpdates(unitsManager.GetPlayerUnit(unitPos).transform);
+					return;
+				}*/
 				if (SelectableUnitClicked(clickPosition))
 				{
 					ResetMovementTiles();
@@ -325,6 +331,8 @@ public class BoardManager : MonoBehaviour
 	{
 		Stack<Vector3Int> tilemapPath = pathfinder.GetPath(unitPos, targetPos);
 		Queue<Vector3Int> worldCoordPath = new Queue<Vector3Int>();
+		if (tilemapPath == null)
+			return worldCoordPath;
 		while(tilemapPath.Count > 0)
 		{
 			Vector3Int worldPos = Vector3Int.RoundToInt(movementBoard.CellToWorld(tilemapPath.Pop()));
