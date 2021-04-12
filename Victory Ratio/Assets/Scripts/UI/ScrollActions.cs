@@ -41,35 +41,40 @@ public class ScrollActions : MonoBehaviour
 		if (moveLeft)
 		{
 			cameraTransform.Translate(Vector3.left * Time.deltaTime * cameraSpeed);
-			if (cameraTransform.position.x < minX)
-			{
-				cameraTransform.position = new Vector3(minX, cameraTransform.position.y, cameraTransform.position.z);
-			}
+			
 		}
 		if (moveRight)
 		{
 			cameraTransform.Translate(Vector3.right * Time.deltaTime * cameraSpeed);
-			if (cameraTransform.position.x > maxX)
-			{
-				cameraTransform.position = new Vector3(maxX, cameraTransform.position.y, cameraTransform.position.z);
-			}
+			
 		}
 		
 		if (moveUp)
 		{
 			cameraTransform.Translate(Vector3.up * Time.deltaTime * cameraSpeed);
-			if (cameraTransform.position.y > maxY)
-			{
-				cameraTransform.position = new Vector3(cameraTransform.position.x, maxY, cameraTransform.position.z);
-			}
+			
 		}
 		if (moveDown)
 		{
 			cameraTransform.Translate(Vector3.down * Time.deltaTime * cameraSpeed);
-			if (cameraTransform.position.y < minY)
-			{
-				cameraTransform.position = new Vector3(cameraTransform.position.x, minY, cameraTransform.position.z);
-			}
+			
+		}
+		//No matter what moves the camera, with these values out here it should not go outside of the camera range.
+		if (cameraTransform.position.x < minX)
+		{
+			cameraTransform.position = new Vector3(minX, cameraTransform.position.y, cameraTransform.position.z);
+		}
+		if (cameraTransform.position.x > maxX)
+		{
+			cameraTransform.position = new Vector3(maxX, cameraTransform.position.y, cameraTransform.position.z);
+		}
+		if (cameraTransform.position.y > maxY)
+		{
+			cameraTransform.position = new Vector3(cameraTransform.position.x, maxY, cameraTransform.position.z);
+		}
+		if (cameraTransform.position.y < minY)
+		{
+			cameraTransform.position = new Vector3(cameraTransform.position.x, minY, cameraTransform.position.z);
 		}
 	}
 

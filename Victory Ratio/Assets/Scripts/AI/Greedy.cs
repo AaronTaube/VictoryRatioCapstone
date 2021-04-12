@@ -9,7 +9,7 @@ public class Greedy : MonoBehaviour
 	private BoardManager boardManager;
 	private CombatManager combatManager;
 	private Astar astar;
-
+	private Camera mainCamera;
 	private Queue<Unit> units;
 	private Unit current;
 	private Unit target;
@@ -23,6 +23,7 @@ public class Greedy : MonoBehaviour
 		boardManager = FindObjectOfType<BoardManager>();
 		combatManager = FindObjectOfType<CombatManager>();
 		astar = FindObjectOfType<Astar>();
+		mainCamera = FindObjectOfType<Camera>();
 		stateManager.ai = GameStateManager.AIState.Waiting;
 	}
 
@@ -107,15 +108,31 @@ public class Greedy : MonoBehaviour
 	
 	IEnumerator MovementAction()
 	{
+		
 		float elapsedTime = 0f;
 		while (elapsedTime < .25f)
 		{
 			elapsedTime += Time.deltaTime;
 			yield return new WaitForEndOfFrame();
 		}
+		if (CameraNeedsMoved())
+		{
+			mainCamera.transform.position = new Vector3(current.transform.position.x, current.transform.position.y, mainCamera.transform.position.z);
+		}
+		
 		target = FindTarget(current);
 		boardManager.MoveEnemyUnit(current, target);
 		
+	}
+	bool CameraNeedsMoved()
+	{
+		double differenceX = Mathf.Abs(mainCamera.transform.position.x - current.transform.position.x);
+		double differenceY = Mathf.Abs(mainCamera.transform.position.y - current.transform.position.y);
+		if(differenceX > 7 || differenceY > 4)
+		{
+			return true;
+		}
+		return false;
 	}
 	/// <summary>
 	/// Could make this target the unit position instead
