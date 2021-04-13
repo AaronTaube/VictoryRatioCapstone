@@ -13,7 +13,9 @@ public class BoardManager : MonoBehaviour
 	private Tile moveTile;
 	[SerializeField]
 	private Tile attackTile;
-
+	[Header("Canvas")]
+	[SerializeField]
+	GameObject pauseMenu;
 
 	[Header("Managers")]
 	[SerializeField]
@@ -63,7 +65,7 @@ public class BoardManager : MonoBehaviour
 	{
 		//currently setting it to start as player turn and movement phase, will likely not be the case later.
 		stateManager = FindObjectOfType<GameStateManager>();
-		stateManager.phase = GameStateManager.GameState.MovementSelection;
+		stateManager.phase = GameStateManager.GameState.MovementSelection;//TODO Comment this line out once dialogue is added
 		stateManager.turn = GameStateManager.Turn.Player;
 		Debug.Log(stateManager.phase);
 	}
@@ -73,6 +75,20 @@ public class BoardManager : MonoBehaviour
 	/// </summary>
 	void Update()
 	{
+		if (stateManager.turn == GameStateManager.Turn.MenuOpen && playerHasControl)
+		{
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				ReturnToGame();
+				//TODO Open Menu
+			}
+			return;
+		}
+			
+		//Skip control options at scene open or menu open
+		if (stateManager.turn == GameStateManager.Turn.SceneOpen || stateManager.turn == GameStateManager.Turn.MenuOpen)
+			return;
+
 		switch (stateManager.turn)
 		{
 			case GameStateManager.Turn.Player:
@@ -97,8 +113,15 @@ public class BoardManager : MonoBehaviour
 	/// </summary>
 	void PlayerTurnLogic()
 	{
+
 		if (playerHasControl)
 		{
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				stateManager.turn = GameStateManager.Turn.MenuOpen;
+				pauseMenu.SetActive(!pauseMenu.activeSelf);
+				//TODO Open Menu
+			}
 			switch (stateManager.phase)
 			{
 				case GameStateManager.GameState.MovementSelection:
@@ -150,12 +173,7 @@ public class BoardManager : MonoBehaviour
 					MoveUnit();
 					return;
 				}
-				/*if(SelectableUnitClicked(clickPosition) && clickPosition == unitPos)
-				{
-					ResetMovementTiles();
-					EndOfMovementUpdates(unitsManager.GetPlayerUnit(unitPos).transform);
-					return;
-				}*/
+				
 				if (SelectableUnitClicked(clickPosition))
 				{
 					ResetMovementTiles();
@@ -553,4 +571,11 @@ public class BoardManager : MonoBehaviour
 			stateManager.progress = GameStateManager.MatchState.Win;
 		}
 	}
+
+	public void ReturnToGame()
+	{
+		stateManager.turn = GameStateManager.Turn.Player;
+		pauseMenu.SetActive(!pauseMenu.activeSelf);
+	}
+
 }

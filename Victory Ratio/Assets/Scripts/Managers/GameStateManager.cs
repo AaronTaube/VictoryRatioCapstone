@@ -20,7 +20,7 @@ public class GameStateManager : MonoBehaviour
 	/// </summary>
 	public enum GameState
 	{
-		SceneOpen,
+		
 		MovementSelection,
 		AttackSelection,
 		MathIncentive,
@@ -39,6 +39,8 @@ public class GameStateManager : MonoBehaviour
 	/// </summary>
 	public enum Turn
 	{
+		SceneOpen,
+		MenuOpen,
 		Player,
 		Enemy,
 		NPC
@@ -57,10 +59,12 @@ public class GameStateManager : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
+
 		sceneManager = FindObjectOfType<SceneLoader>();
 		boardManager = FindObjectOfType<BoardManager>();
 		//unitsManager = FindObjectOfType<UnitsManager>();
 		progress = MatchState.InProgress;
+		//phase = GameState.SceneOpen;//TODO uncomment this when testing is done.
 	}
 
     // Update is called once per frame
@@ -104,5 +108,10 @@ public class GameStateManager : MonoBehaviour
 		//Play defeat music if added
 
 	}
+	/*public void ReturnToGame()
+	{
+		stateManager.turn = GameStateManager.Turn.Player;
+		pauseMenu.SetActive(!pauseMenu.activeSelf);
+	}*/
 
 }
