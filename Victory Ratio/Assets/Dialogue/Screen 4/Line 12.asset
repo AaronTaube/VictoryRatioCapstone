@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82c1b8cad949aeb4183d16408ca776cb, type: 3}
+  m_Name: Line 12
+  m_EditorClassIdentifier: 
+  textLine: "Mentor: But not so fast! If they are attacking other archers, then they
+    fight like normal. Also it\u2019s important to keep space between them and other
+    units. If they attack or are attacked by a unit in an adjacent tile, that unit
+    always has a strength advantage."

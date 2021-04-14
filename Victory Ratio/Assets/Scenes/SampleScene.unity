@@ -638,6 +638,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PauseMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 3111976262008175881, guid: faf0acb9bab660c4a9fe19922e78ef2d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3111976262008175885, guid: faf0acb9bab660c4a9fe19922e78ef2d,
         type: 3}
       propertyPath: m_Pivot.x
@@ -748,6 +753,18 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 108294116}
+    - target: {fileID: 3111976263086685844, guid: faf0acb9bab660c4a9fe19922e78ef2d,
+        type: 3}
+      propertyPath: m_text
+      value: "Hover your mouse over the sides of the screen to move the camera around
+        the map. \nHit Escape at any time to bring up the menu and view this or the
+        math tips screen. "
+      objectReference: {fileID: 0}
+    - target: {fileID: 3111976263086685846, guid: faf0acb9bab660c4a9fe19922e78ef2d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3111976263169146137, guid: faf0acb9bab660c4a9fe19922e78ef2d,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -758,6 +775,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1703952150}
+    - target: {fileID: 3111976263393069302, guid: faf0acb9bab660c4a9fe19922e78ef2d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: faf0acb9bab660c4a9fe19922e78ef2d, type: 3}
 --- !u!1001 &3119333854976905823
@@ -1494,7 +1516,12 @@ PrefabInstance:
     - target: {fileID: 4482634142754318717, guid: 15c9d9a4ebea1994591c7412f204aad0,
         type: 3}
       propertyPath: postMathDelay
-      value: 1
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4482634142754318717, guid: 15c9d9a4ebea1994591c7412f204aad0,
+        type: 3}
+      propertyPath: answerDisplayTime
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4482634143075312054, guid: 15c9d9a4ebea1994591c7412f204aad0,
         type: 3}
@@ -1554,11 +1581,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Dialogue
-      objectReference: {fileID: 0}
-    - target: {fileID: 6250180159010910393, guid: 0e72c6105dbb393448ec3745981b0bc5,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6250180159010910397, guid: 0e72c6105dbb393448ec3745981b0bc5,
         type: 3}

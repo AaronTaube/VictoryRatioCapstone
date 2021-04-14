@@ -64,7 +64,7 @@ public class GameStateManager : MonoBehaviour
 		boardManager = FindObjectOfType<BoardManager>();
 		//unitsManager = FindObjectOfType<UnitsManager>();
 		progress = MatchState.InProgress;
-		//phase = GameState.SceneOpen;//TODO uncomment this when testing is done.
+		turn = Turn.SceneOpen;//TODO uncomment this when testing is done.
 	}
 
     // Update is called once per frame

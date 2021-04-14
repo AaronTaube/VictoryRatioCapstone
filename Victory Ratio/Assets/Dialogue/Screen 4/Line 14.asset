@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82c1b8cad949aeb4183d16408ca776cb, type: 3}
+  m_Name: Line 14
+  m_EditorClassIdentifier: 
+  textLine: "Mentor: But you have a unit that can come to their aid much more quickly.
+    Cavalry don\u2019t have type advantage against any units but archers. They also
+    don\u2019t have a disadvantage against any units though. Which makes them nice,
+    balanced units."

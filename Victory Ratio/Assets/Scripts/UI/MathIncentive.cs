@@ -25,10 +25,13 @@ public class MathIncentive : MonoBehaviour
 	float postMathDelay = .5f;
 	[SerializeField]
 	Color green, red, yellow;
+	[SerializeField]
+	AudioClip wrongSound;
+	AudioSource source;
 	// Start is called before the first frame update
 	void Start()
     {
-        
+		source = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -89,6 +92,7 @@ public class MathIncentive : MonoBehaviour
 	{
 		float elapsedTime = 0f;
 		SetTextRed();
+		source.PlayOneShot(wrongSound);
 		while (elapsedTime < answerDisplayTime)
 		{
 			elapsedTime += Time.deltaTime;

@@ -66,7 +66,7 @@ public class BoardManager : MonoBehaviour
 		//currently setting it to start as player turn and movement phase, will likely not be the case later.
 		stateManager = FindObjectOfType<GameStateManager>();
 		stateManager.phase = GameStateManager.GameState.MovementSelection;//TODO Comment this line out once dialogue is added
-		stateManager.turn = GameStateManager.Turn.Player;
+		//stateManager.turn = GameStateManager.Turn.Player;
 		Debug.Log(stateManager.phase);
 	}
 
@@ -80,7 +80,6 @@ public class BoardManager : MonoBehaviour
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
 				ReturnToGame();
-				//TODO Open Menu
 			}
 			return;
 		}
@@ -120,7 +119,6 @@ public class BoardManager : MonoBehaviour
 			{
 				stateManager.turn = GameStateManager.Turn.MenuOpen;
 				pauseMenu.SetActive(!pauseMenu.activeSelf);
-				//TODO Open Menu
 			}
 			switch (stateManager.phase)
 			{
@@ -521,7 +519,6 @@ public class BoardManager : MonoBehaviour
 			unitsManager.PopulateUnitDicts();
 			unitsManager.ResetMoves();
 
-			//TODO: Change to enemy phase
 			stateManager.turn = GameStateManager.Turn.Enemy;
 		}
 		else
