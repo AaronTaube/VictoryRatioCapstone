@@ -9,6 +9,18 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: b4369e722c347b84cbe929cbc9c69dcc
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/Scenes/Tutorial 1.unity
+    guid: ed340f33be3a6864ca223b3eb47fc637
+  - enabled: 1
+    path: Assets/Scenes/Tutorial 2.unity
+    guid: dcb3755fb467f4b449dc0d5113fa4312
+  - enabled: 1
+    path: Assets/Scenes/Battle 1.unity
+    guid: ce21cf99b977df143abee802c31d9654
+  - enabled: 1
+    path: Assets/Scenes/Battle 2.unity
+    guid: 3c88df905d2f5874e856ef604cfcaeb5
+  - enabled: 1
+    path: Assets/Scenes/Battle 3.unity
+    guid: 6ac523bcf64086044a9e7234450e167a
   m_configObjects: {}
